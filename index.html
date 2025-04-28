@@ -2,76 +2,265 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Daily Giveaway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily $1 Giveaway</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    #error { color: red; margin-top: 10px; }
-    #success { color: green; margin-top: 10px; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    .container {
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #00d2ff;
+    }
+    p {
+      color: #ccc;
+    }
+    .form-box {
+      margin: 1.5rem 0;
+    }
+    input {
+      padding: 0.8rem;
+      width: 250px;
+      border: 2px solid #00d2ff;
+      border-radius: 10px;
+      background: #1a1a1a;
+      color: white;
+      outline: none;
+      margin-right: 10px;
+    }
+    button {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      background: linear-gradient(135deg, #00d2ff, #3a47d5);
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #3a47d5, #00d2ff);
+    }
+    .error {
+      color: #ff4c4c;
+      margin-top: 0.5rem;
+    }
+    .winner-box {
+      background: #1a1a1a;
+      border: 2px solid #00d2ff;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 15px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 5px #00d2ff; }
+      50% { box-shadow: 0 0 20px #00d2ff; }
+      100% { box-shadow: 0 0 5px #00d2ff; }
+    }
+    #winnerName {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+    }
+    #userList {
+      list-style: none;
+      padding: 0;
+    }
+    #userList li {
+      background: #1f1f1f;
+      margin: 0.3rem auto;
+      width: 200px;
+      padding: 0.5rem;
+      border-radius: 10px;
+    }
+    canvas#confetti-canvas {
+      position: fixed;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Daily $1 Giveaway</h1>
+    <p>Enter your Telegram username below!</p>
+    
+    <div class="form-box">
+      <input type="text" id="username" placeholder="@yourusername">
+      <button onclick="submitUsername()">Submit</button>
+      <p id="errorMsg" class="error"></p>
+    </div>
 
-<h2>Enter Giveaway</h2>
-<form id="giveawayForm">
-  <input type="text" id="username" placeholder="Enter your username" required>
-  <button type="submit">Submit</button>
-</form>
+    <div class="winner-box" id="winnerBox" style="display: none;">
+      <h2>Today's Winner</h2>
+      <p id="winnerName">Loading...</p>
+    </div>
 
-<div id="error"></div>
-<div id="success"></div>
+    <h2>Leaderboard</h2>
+    <ul id="userList"></ul>
+  </div>
 
-<!-- Firebase SDKs -->
-<script type="module">
-  // Import the functions you need from the SDKs
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  <canvas id="confetti-canvas"></canvas>
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyB6gmpJoowCMRvOKqgNw--9Z8FgqotRXdM",
-    authDomain: "dailygiveaway-43994.firebaseapp.com",
-    databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "dailygiveaway-43994",
-    storageBucket: "dailygiveaway-43994.appspot.com",
-    messagingSenderId: "862490595065",
-    appId: "1:862490595065:web:bebd512d2facff3eeb5c28",
-    measurementId: "G-NB1W0YMEBD"
-  };
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+  <script>
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
+      authDomain: "dailygiveaway-43994.firebaseapp.com",
+      databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "dailygiveaway-43994",
+      storageBucket: "dailygiveaway-43994.appspot.com",
+      messagingSenderId: "370372279478",
+      appId: "1:370372279478:web:b2822497dc5a1c681c348c"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-  // Handle form submit
-  const form = document.getElementById('giveawayForm');
-  const errorDiv = document.getElementById('error');
-  const successDiv = document.getElementById('success');
+    const usernameInput = document.getElementById('username');
+    const errorMsg = document.getElementById('errorMsg');
+    const winnerBox = document.getElementById('winnerBox');
+    const winnerName = document.getElementById('winnerName');
+    const userList = document.getElementById('userList');
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    errorDiv.textContent = '';
-    successDiv.textContent = '';
+    // Submit username
+    async function submitUsername() {
+      const username = usernameInput.value.trim();
 
-    const username = document.getElementById('username').value.trim();
+      if (!username.startsWith('@') || username.length < 4) {
+        showError("Please enter a valid Telegram username!");
+        return;
+      }
 
-    if (username === '') {
-      errorDiv.textContent = 'Please enter a valid username!';
-      return;
+      const today = new Date().toISOString().split('T')[0];
+      const snapshot = await database.ref(`submissions/${today}/${username}`).get();
+      if (snapshot.exists()) {
+        showError("You already submitted today!");
+        return;
+      }
+
+      await database.ref(`submissions/${today}/${username}`).set(true);
+      usernameInput.value = '';
+      errorMsg.textContent = '';
+
+      showWinnerBox();
+      loadUsernames();
     }
 
-    // Save data to Realtime Database
-    set(ref(db, 'submissions/' + Date.now()), {
-      username: username
-    })
-    .then(() => {
-      successDiv.textContent = 'Successfully submitted!';
-      form.reset();
-    })
-    .catch((error) => {
-      errorDiv.textContent = 'Failed to submit: ' + error.message;
-    });
-  });
-</script>
+    // Show animated winner box
+    function showWinnerBox() {
+      winnerBox.style.display = 'block';
+      startConfetti();
+    }
 
+    // Load all usernames
+    async function loadUsernames() {
+      const today = new Date().toISOString().split('T')[0];
+      const snapshot = await database.ref(`submissions/${today}`).get();
+      userList.innerHTML = '';
+
+      if (snapshot.exists()) {
+        snapshot.forEach(child => {
+          const li = document.createElement('li');
+          li.textContent = child.key;
+          userList.appendChild(li);
+        });
+      }
+    }
+
+    // Pick winner daily at 7 PM
+    function autoPickWinner() {
+      const now = new Date();
+      if (now.getHours() === 19 && now.getMinutes() === 0) {
+        pickWinner();
+      }
+    }
+
+    async function pickWinner() {
+      const today = new Date().toISOString().split('T')[0];
+      const snapshot = await database.ref(`submissions/${today}`).get();
+
+      if (snapshot.exists()) {
+        const usernames = Object.keys(snapshot.val());
+        const randomIndex = Math.floor(Math.random() * usernames.length);
+        const winner = usernames[randomIndex];
+
+        database.ref(`winners/${today}`).set(winner);
+        winnerName.textContent = winner;
+        startConfetti();
+      }
+    }
+
+    // Load today's winner if already picked
+    async function loadWinner() {
+      const today = new Date().toISOString().split('T')[0];
+      const snapshot = await database.ref(`winners/${today}`).get();
+
+      if (snapshot.exists()) {
+        winnerName.textContent = snapshot.val();
+        winnerBox.style.display = 'block';
+      }
+    }
+
+    // Show custom error
+    function showError(message) {
+      errorMsg.textContent = message;
+    }
+
+    // Simple confetti animation
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 4 + 1,
+          d: Math.random() * 50,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          tilt: Math.random() * 10 - 10
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, false);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+        update();
+      }
+
+      function update() {
+        particles.forEach(p => {
+          p.y += Math.cos(p.d) + 1 + p.r / 2;
+          p.x += Math.sin(p.d) * 2;
+        });
+      }
+
+      setInterval(draw, 30);
+    }
+
+    // Init
+    loadWinner();
+    loadUsernames();
+    setInterval(autoPickWinner, 60000); // check every minute
+  </script>
 </body>
 </html>
