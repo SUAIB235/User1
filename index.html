@@ -296,6 +296,32 @@
       }
     }
 
+async function pickWinner() {
+  const today = new Date().toISOString().split('T')[0];
+  const submissionsRef = database.ref(`submissions/${today}`);
+  const snapshot = await submissionsRef.get();
+
+  if (snapshot.exists()) {
+    const usernames = Object.keys(snapshot.val());
+    const randomIndex = Math.floor(Math.random() * usernames.length);
+    const winner = usernames[randomIndex];
+
+    // Save the winner
+    await database.ref(`winners/${today}`).set(winner);
+
+    // Clear all today's submissions
+    await submissionsRef.remove();
+
+    // Update UI
+    winnerName.textContent = winner;
+    winnerBox.style.display = 'block';
+    startConfetti();
+
+    // Clear user list
+    userList.innerHTML = '';
+  }
+}
+
     function updateCountdown() {
       const now = new Date();
       const target = new Date();
