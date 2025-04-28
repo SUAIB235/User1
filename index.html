@@ -159,6 +159,31 @@
       loadUsernames();
     }
 
+const today = new Date().toISOString().split('T')[0];
+
+function checkSubmissionStatus() {
+  const submittedDate = localStorage.getItem('submittedDate');
+  if (submittedDate === today) {
+    hideForm();
+  } else {
+    showForm();
+  }
+}
+
+function hideForm() {
+  document.querySelector('.form-box').style.display = 'none';
+}
+
+function showForm() {
+  document.querySelector('.form-box').style.display = 'block';
+}
+
+async function submitUsername() {
+  // after successful save to database:
+  localStorage.setItem('submittedDate', today);
+  hideForm();
+}
+  
     // Show animated winner box
     function showWinnerBox() {
       winnerBox.style.display = 'block';
