@@ -21,9 +21,7 @@
       margin-bottom: 0.5rem;
     }
     p { color: #555; }
-    .form-box {
-      margin: 2rem 0;
-    }
+    .form-box { margin: 2rem 0; }
     input {
       padding: 0.8rem;
       width: 250px;
@@ -104,17 +102,36 @@
       width: 100%;
       height: 100%;
     }
+    .thank-you {
+      font-size: 1.5rem;
+      margin-top: 1rem;
+      color: #16a34a;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Daily $1 Giveaway</h1>
+
+    <!-- Top Ad after Title -->
+    <div style="margin: 1rem 0;">
+      <script async src="https://propu.sh/pfe/current/tag.min.js?z=TOP-AD-ZONE-ID" data-cfasync="false"></script>
+    </div>
+
     <p id="formText">Enter your Telegram username below!</p>
 
     <div class="form-box" id="formBox">
       <input type="text" id="username" placeholder="@yourusername">
       <button onclick="submitUsername()">Submit</button>
       <p id="errorMsg" class="error"></p>
+    </div>
+
+    <p id="thankYouMessage" class="thank-you" style="display:none;">Thank you for participating! Good luck!</p>
+
+    <!-- Ad after submission -->
+    <div id="thankYouAd" style="margin: 2rem 0; display:none;">
+      <script async src="https://propu.sh/pfe/current/tag.min.js?z=THANKYOU-AD-ZONE-ID" data-cfasync="false"></script>
     </div>
 
     <div class="winner-box" id="winnerBox" style="display: none;">
@@ -128,8 +145,19 @@
 
     <div class="leaderboard">
       <h2>Leaderboard</h2>
+
+      <!-- Leaderboard Ad -->
+      <div style="margin: 1rem 0;">
+        <script async src="https://propu.sh/pfe/current/tag.min.js?z=LEADERBOARD-AD-ZONE-ID" data-cfasync="false"></script>
+      </div>
+
       <ul id="userList"></ul>
     </div>
+  </div>
+
+  <!-- Sticky Bottom Ad -->
+  <div style="position:fixed; bottom:0; width:100%; background:white; text-align:center; z-index:1000; padding:5px;">
+    <script async src="https://propu.sh/pfe/current/tag.min.js?z=BOTTOM-AD-ZONE-ID" data-cfasync="false"></script>
   </div>
 
   <canvas id="confetti-canvas"></canvas>
@@ -159,6 +187,8 @@
     const formBox = document.getElementById('formBox');
     const formText = document.getElementById('formText');
     const countdownTimer = document.getElementById('countdownTimer');
+    const thankYouMessage = document.getElementById('thankYouMessage');
+    const thankYouAd = document.getElementById('thankYouAd');
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -194,7 +224,10 @@
 
       usernameInput.value = '';
       errorMsg.textContent = '';
+
       hideForm();
+      thankYouMessage.style.display = 'block';
+      thankYouAd.style.display = 'block';
       showWinnerBox();
       loadUsernames();
       loadWinner();
@@ -293,7 +326,7 @@
     function updateCountdown() {
       const now = new Date();
       const target = new Date();
-      target.setHours(19, 0, 0, 0); // 7 PM today
+      target.setHours(19, 0, 0, 0);
 
       if (now > target) {
         target.setDate(target.getDate() + 1);
@@ -310,6 +343,8 @@
     const submittedDate = localStorage.getItem('submittedDate');
     if (submittedDate === today) {
       hideForm();
+      thankYouMessage.style.display = 'block';
+      thankYouAd.style.display = 'block';
       showWinnerBox();
     }
 
