@@ -165,75 +165,96 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
-      authDomain: "dailygiveaway-43994.firebaseapp.com",
-      databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "dailygiveaway-43994",
-      storageBucket: "dailygiveaway-43994.appspot.com",
-      messagingSenderId: "370372279478",
-      appId: "1:370372279478:web:b2822497dc5a1c681c348c"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+       <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
+    authDomain: "dailygiveaway-43994.firebaseapp.com",
+    databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dailygiveaway-43994",
+    storageBucket: "dailygiveaway-43994.appspot.com",
+    messagingSenderId: "370372279478",
+    appId: "1:370372279478:web:b2822497dc5a1c681c348c"
+  };
+  
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
 
-    const usernameInput = document.getElementById('username');
-    const errorMsg = document.getElementById('errorMsg');
-    const winnerBox = document.getElementById('winnerBox');
-    const winnerName = document.getElementById('winnerName');
-    const userList = document.getElementById('userList');
-    const formBox = document.getElementById('formBox');
-    const formText = document.getElementById('formText');
-    const countdownTimer = document.getElementById('countdownTimer');
-    const thankYouMessage = document.getElementById('thankYouMessage');
-    const thankYouAd = document.getElementById('thankYouAd');
+  const usernameInput = document.getElementById('username');
+  const errorMsg = document.getElementById('errorMsg');
+  const winnerBox = document.getElementById('winnerBox');
+  const winnerName = document.getElementById('winnerName');
+  const userList = document.getElementById('userList');
+  const formBox = document.getElementById('formBox');
+  const formText = document.getElementById('formText');
+  const countdownTimer = document.getElementById('countdownTimer');
+  const thankYouMessage = document.getElementById('thankYouMessage');
+  const thankYouAd = document.getElementById('thankYouAd');
+  const submitBtn = formBox.querySelector('button');
 
-    const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0];
+  let confettiRunning = false;
 
-    function showError(message) {
-      errorMsg.textContent = message;
+  function showError(message) {
+    errorMsg.textContent = message;
+  }
+
+  function hideForm() {
+    formBox.style.display = 'none';
+    formText.style.display = 'none';
+  }
+
+  function showThankYou() {
+    thankYouMessage.style.display = 'block';
+    thankYouAd.style.display = 'block';
+  }
+
+  function showWinnerBox() {
+    winnerBox.style.display = 'block';
+    startConfetti();
+  }
+
+  async function submitUsername() {
+    const username = usernameInput.value.trim();
+    if (!username.startsWith('@') || username.length < 4) {
+      showError("Please enter a valid Telegram username!");
+      return;
     }
 
-    function hideForm() {
-      formBox.style.display = 'none';
-      formText.style.display = 'none';
-    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
 
-    function showWinnerBox() {
-      winnerBox.style.display = 'block';
-      startConfetti();
-    }
+    try {
+      const userRef = database.ref(`submissions/${today}/${username}`);
+      const snapshot = await userRef.get();
 
-    async function submitUsername() {
-      const username = usernameInput.value.trim();
-      if (!username.startsWith('@') || username.length < 4) {
-        showError("Please enter a valid Telegram username!");
-        return;
-      }
-
-      const snapshot = await database.ref(`submissions/${today}/${username}`).get();
       if (snapshot.exists()) {
         showError("You already submitted today!");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
         return;
       }
 
-      await database.ref(`submissions/${today}/${username}`).set(true);
+      await userRef.set(true);
       localStorage.setItem('submittedDate', today);
 
       usernameInput.value = '';
       errorMsg.textContent = '';
 
       hideForm();
-      thankYouMessage.style.display = 'block';
-      thankYouAd.style.display = 'block';
+      showThankYou();
       showWinnerBox();
       loadUsernames();
       loadWinner();
+    } catch (error) {
+      console.error("Submission failed:", error);
+      showError("Something went wrong. Try again.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit";
     }
+  }
 
-    async function loadUsernames() {
+  async function loadUsernames() {
+    try {
       const snapshot = await database.ref(`submissions/${today}`).get();
       userList.innerHTML = '';
 
@@ -244,9 +265,13 @@
           userList.appendChild(li);
         });
       }
+    } catch (error) {
+      console.error("Failed to load usernames:", error);
     }
+  }
 
-    async function loadWinner() {
+  async function loadWinner() {
+    try {
       const snapshot = await database.ref(`winners/${today}`).get();
       if (snapshot.exists()) {
         winnerName.textContent = snapshot.val();
@@ -254,9 +279,13 @@
       } else {
         winnerName.textContent = "Not picked yet!";
       }
+    } catch (error) {
+      console.error("Failed to load winner:", error);
     }
+  }
 
-    async function pickWinner() {
+  async function pickWinner() {
+    try {
       const submissionsRef = database.ref(`submissions/${today}`);
       const snapshot = await submissionsRef.get();
 
@@ -266,85 +295,96 @@
         const winner = usernames[randomIndex];
 
         await database.ref(`winners/${today}`).set(winner);
-        await submissionsRef.remove(); // Clear all today's submissions
+        await submissionsRef.remove(); // Clear today's submissions
 
         winnerName.textContent = winner;
         winnerBox.style.display = 'block';
         startConfetti();
         userList.innerHTML = '';
       }
+    } catch (error) {
+      console.error("Failed to pick winner:", error);
+    }
+  }
+
+  function startConfetti() {
+    if (confettiRunning) return;
+    confettiRunning = true;
+
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const particles = Array.from({ length: 100 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 4 + 1,
+      d: Math.random() * 50,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      tilt: Math.random() * 10 - 10
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
+      update();
     }
 
-    function startConfetti() {
-      const canvas = document.getElementById('confetti-canvas');
-      const ctx = canvas.getContext('2d');
+    function update() {
+      particles.forEach(p => {
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.x += Math.sin(p.d) * 2;
 
-      const particles = [];
-      for (let i = 0; i < 100; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 4 + 1,
-          d: Math.random() * 50,
-          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-          tilt: Math.random() * 10 - 10
-        });
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, false);
-          ctx.fillStyle = p.color;
-          ctx.fill();
-        });
-        update();
-      }
-
-      function update() {
-        particles.forEach(p => {
-          p.y += Math.cos(p.d) + 1 + p.r / 2;
-          p.x += Math.sin(p.d) * 2;
-          if (p.y > canvas.height) {
-            p.y = 0;
-            p.x = Math.random() * canvas.width;
-          }
-        });
-      }
-
-      setInterval(draw, 30);
+        if (p.y > canvas.height) {
+          p.y = 0;
+          p.x = Math.random() * canvas.width;
+        }
+      });
     }
 
-    function autoPickWinnerEveryMinute() {
-      const now = new Date();
-      if (now.getHours() === 19 && now.getMinutes() === 0) {
-        pickWinner();
-      }
+    setInterval(draw, 30);
+  }
+
+  function autoPickWinnerEveryMinute() {
+    const now = new Date();
+    if (now.getHours() === 19 && now.getMinutes() === 0) {
+      pickWinner();
+    }
+  }
+
+  function updateCountdown() {
+    const now = new Date();
+    const target = new Date();
+    target.setHours(19, 0, 0, 0);
+
+    if (now > target) {
+      target.setDate(target.getDate() + 1);
     }
 
-    function updateCountdown() {
-      const now = new Date();
-      const target = new Date();
-      target.setHours(19, 0, 0, 0);
+    const diff = target - now;
+    const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+    const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
 
-      if (now > target) {
-        target.setDate(target.getDate() + 1);
-      }
+    countdownTimer.textContent = `Next winner will be picked in ${hours}:${minutes}:${seconds}.`;
+  }
 
-      const diff = target - now;
-      const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
-      const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-      const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
-
-      countdownTimer.textContent = `Next winner will be picked in ${hours}:${minutes}:${seconds}.`;
-    }
-
+  document.addEventListener('DOMContentLoaded', () => {
     const submittedDate = localStorage.getItem('submittedDate');
     if (submittedDate === today) {
       hideForm();
-      thankYouMessage.style.display = 'block';
-      thankYouAd.style.display = 'block';
+      showThankYou();
       showWinnerBox();
     }
 
@@ -353,6 +393,5 @@
     setInterval(autoPickWinnerEveryMinute, 60000);
     setInterval(updateCountdown, 1000);
     updateCountdown();
-  </script>
-</body>
-</html>
+  });
+</script> 
