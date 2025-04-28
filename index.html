@@ -14,17 +14,13 @@
       text-align: center;
       overflow-x: hidden;
     }
-    .container {
-      padding: 2rem;
-    }
+    .container { padding: 2rem; }
     h1 {
       font-size: 2.5rem;
       color: #4f46e5;
       margin-bottom: 0.5rem;
     }
-    p {
-      color: #555;
-    }
+    p { color: #555; }
     .form-box {
       margin: 2rem 0;
     }
@@ -52,10 +48,7 @@
     button:hover {
       background: linear-gradient(135deg, #6366f1, #4f46e5);
     }
-    .error {
-      color: #e11d48;
-      margin-top: 0.5rem;
-    }
+    .error { color: #e11d48; margin-top: 0.5rem; }
     .winner-box {
       background: #ffffff;
       border: 2px solid #4f46e5;
@@ -146,7 +139,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
       authDomain: "dailygiveaway-43994.firebaseapp.com",
@@ -156,7 +148,7 @@
       messagingSenderId: "370372279478",
       appId: "1:370372279478:web:b2822497dc5a1c681c348c"
     };
-
+    
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -233,19 +225,22 @@
     }
 
     async function pickWinner() {
-      const snapshot = await database.ref(`submissions/${today}`).get();
-      if (!snapshot.exists()) return;
+      const submissionsRef = database.ref(`submissions/${today}`);
+      const snapshot = await submissionsRef.get();
 
-      const winnerSnapshot = await database.ref(`winners/${today}`).get();
-      if (winnerSnapshot.exists()) return; // already picked
+      if (snapshot.exists()) {
+        const usernames = Object.keys(snapshot.val());
+        const randomIndex = Math.floor(Math.random() * usernames.length);
+        const winner = usernames[randomIndex];
 
-      const usernames = Object.keys(snapshot.val());
-      const randomIndex = Math.floor(Math.random() * usernames.length);
-      const winner = usernames[randomIndex];
+        await database.ref(`winners/${today}`).set(winner);
+        await submissionsRef.remove(); // Clear all today's submissions
 
-      await database.ref(`winners/${today}`).set(winner);
-      winnerName.textContent = winner;
-      showWinnerBox();
+        winnerName.textContent = winner;
+        winnerBox.style.display = 'block';
+        startConfetti();
+        userList.innerHTML = '';
+      }
     }
 
     function startConfetti() {
@@ -296,39 +291,13 @@
       }
     }
 
-async function pickWinner() {
-  const today = new Date().toISOString().split('T')[0];
-  const submissionsRef = database.ref(`submissions/${today}`);
-  const snapshot = await submissionsRef.get();
-
-  if (snapshot.exists()) {
-    const usernames = Object.keys(snapshot.val());
-    const randomIndex = Math.floor(Math.random() * usernames.length);
-    const winner = usernames[randomIndex];
-
-    // Save the winner
-    await database.ref(`winners/${today}`).set(winner);
-
-    // Clear all today's submissions
-    await submissionsRef.remove();
-
-    // Update UI
-    winnerName.textContent = winner;
-    winnerBox.style.display = 'block';
-    startConfetti();
-
-    // Clear user list
-    userList.innerHTML = '';
-  }
-}
-
     function updateCountdown() {
       const now = new Date();
       const target = new Date();
       target.setHours(19, 0, 0, 0); // 7 PM today
 
       if (now > target) {
-        target.setDate(target.getDate() + 1); // if past 7 PM, set target to tomorrow
+        target.setDate(target.getDate() + 1);
       }
 
       const diff = target - now;
@@ -339,7 +308,6 @@ async function pickWinner() {
       countdownTimer.textContent = `Next winner will be picked in ${hours}:${minutes}:${seconds}.`;
     }
 
-    // Init
     const submittedDate = localStorage.getItem('submittedDate');
     if (submittedDate === today) {
       hideForm();
