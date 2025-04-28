@@ -97,6 +97,12 @@
       font-weight: 500;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
+    .countdown {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #4f46e5;
+    }
     canvas#confetti-canvas {
       position: fixed;
       pointer-events: none;
@@ -110,8 +116,8 @@
 <body>
   <div class="container">
     <h1>Daily $1 Giveaway</h1>
-    <p>Enter your Telegram username below!</p>
-    
+    <p id="formText">Enter your Telegram username below!</p>
+
     <div class="form-box" id="formBox">
       <input type="text" id="username" placeholder="@yourusername">
       <button onclick="submitUsername()">Submit</button>
@@ -121,6 +127,10 @@
     <div class="winner-box" id="winnerBox" style="display: none;">
       <h2>Today's Winner</h2>
       <p id="winnerName">Loading...</p>
+    </div>
+
+    <div class="countdown" id="countdownTimer">
+      Next winner will be picked in --:--:--.
     </div>
 
     <div class="leaderboard">
@@ -156,6 +166,8 @@
     const winnerName = document.getElementById('winnerName');
     const userList = document.getElementById('userList');
     const formBox = document.getElementById('formBox');
+    const formText = document.getElementById('formText');
+    const countdownTimer = document.getElementById('countdownTimer');
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -165,6 +177,7 @@
 
     function hideForm() {
       formBox.style.display = 'none';
+      formText.style.display = 'none';
     }
 
     function showWinnerBox() {
@@ -283,6 +296,23 @@
       }
     }
 
+    function updateCountdown() {
+      const now = new Date();
+      const target = new Date();
+      target.setHours(19, 0, 0, 0); // 7 PM today
+
+      if (now > target) {
+        target.setDate(target.getDate() + 1); // if past 7 PM, set target to tomorrow
+      }
+
+      const diff = target - now;
+      const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+      const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+      const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+
+      countdownTimer.textContent = `Next winner will be picked in ${hours}:${minutes}:${seconds}.`;
+    }
+
     // Init
     const submittedDate = localStorage.getItem('submittedDate');
     if (submittedDate === today) {
@@ -293,6 +323,8 @@
     loadUsernames();
     loadWinner();
     setInterval(autoPickWinnerEveryMinute, 60000);
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 </body>
 </html>
