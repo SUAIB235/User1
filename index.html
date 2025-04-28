@@ -2,122 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Telegram Giveaway</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Daily Giveaway</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #error { color: red; margin-top: 10px; }
+    #success { color: green; margin-top: 10px; }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white font-sans">
+<body>
 
-  <div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md">
-    <h1 class="text-3xl font-bold text-center mb-6">$1 Daily Giveaway</h1>
+<h2>Enter Giveaway</h2>
+<form id="giveawayForm">
+  <input type="text" id="username" placeholder="Enter your username" required>
+  <button type="submit">Submit</button>
+</form>
 
-    <div id="form-section">
-      <input id="username" type="text" placeholder="Enter your Telegram username" class="w-full p-3 rounded-lg border mb-4">
-      <button onclick="submitUsername()" class="w-full bg-indigo-600 hover:bg-indigo-700 p-3 rounded-lg font-semibold text-white">Submit</button>
-    </div>
+<div id="error"></div>
+<div id="success"></div>
 
-    <div id="winner-box" class="hidden mt-6 p-4 bg-green-100 text-green-800 rounded-lg text-center">
-      <p>Thank you for participating!</p>
-    </div>
+<!-- Firebase SDKs -->
+<script type="module">
+  // Import the functions you need from the SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    <div id="today-winner" class="hidden mt-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg text-center">
-      <h2 class="font-bold">Today's Winner:</h2>
-      <p id="winner-name" class="mt-2"></p>
-    </div>
-
-    <div class="mt-8">
-      <h2 class="text-xl font-bold mb-2">Today's Participants:</h2>
-      <ul id="user-list" class="space-y-2"></ul>
-    </div>
-  </div>
-
-<script>
-  // Firebase configuration (replace with your config)
+  // Your web app's Firebase configuration
   const firebaseConfig = {
-  apiKey: "AIzaSyB6gmpJoowCMRVoKqgNw--9Z8FqgotRXdM",
-  authDomain: "dailygiveaway-43994.firebaseapp.com",
-  databaseURL: "https://dailygiveaway-43994-default-rtdb.firebaseio.com",
-  projectId: "dailygiveaway-43994",
-  storageBucket: "dailygiveaway-43994.appspot.com",
-  messagingSenderId: "862490595065",
-  appId: "1:862490595065:web:bebd512d2facff3eeb5c28",
-  measurementId: "G-NB1W0YMEBD"
-};
+    apiKey: "AIzaSyB6gmpJoowCMRvOKqgNw--9Z8FgqotRXdM",
+    authDomain: "dailygiveaway-43994.firebaseapp.com",
+    databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dailygiveaway-43994",
+    storageBucket: "dailygiveaway-43994.appspot.com",
+    messagingSenderId: "862490595065",
+    appId: "1:862490595065:web:bebd512d2facff3eeb5c28",
+    measurementId: "G-NB1W0YMEBD"
+  };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  // Handle form submit
+  const form = document.getElementById('giveawayForm');
+  const errorDiv = document.getElementById('error');
+  const successDiv = document.getElementById('success');
 
-  async function submitUsername() {
-    const usernameInput = document.getElementById('username');
-    const username = usernameInput.value.trim();
-    if (!username) {
-      alert('Please enter your Telegram username.');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    errorDiv.textContent = '';
+    successDiv.textContent = '';
+
+    const username = document.getElementById('username').value.trim();
+
+    if (username === '') {
+      errorDiv.textContent = 'Please enter a valid username!';
       return;
     }
 
-    // Check if user already submitted today
-    const snapshot = await db.ref(`submissions/${today}`).once('value');
-    const submissions = snapshot.val() || {};
-    const usernames = Object.values(submissions);
-
-    if (usernames.includes(username)) {
-      alert('You have already submitted today!');
-      return;
-    }
-
-    const newSubmissionRef = db.ref(`submissions/${today}`).push();
-    newSubmissionRef.set(username);
-
-    document.getElementById('form-section').classList.add('hidden');
-    document.getElementById('winner-box').classList.remove('hidden');
-  }
-
-  async function loadUserList() {
-    const snapshot = await db.ref(`submissions/${today}`).once('value');
-    const submissions = snapshot.val() || {};
-    const userList = document.getElementById('user-list');
-    userList.innerHTML = '';
-    Object.values(submissions).forEach(user => {
-      const li = document.createElement('li');
-      li.textContent = `@${user}`;
-      userList.appendChild(li);
+    // Save data to Realtime Database
+    set(ref(db, 'submissions/' + Date.now()), {
+      username: username
+    })
+    .then(() => {
+      successDiv.textContent = 'Successfully submitted!';
+      form.reset();
+    })
+    .catch((error) => {
+      errorDiv.textContent = 'Failed to submit: ' + error.message;
     });
-  }
-
-  async function checkWinner() {
-    const winnerSnapshot = await db.ref(`winners/${today}`).once('value');
-    let winner = winnerSnapshot.val();
-
-    if (!winner) {
-      const now = new Date();
-      if (now.getHours() >= 19) { // 7 PM = 19 hours
-        // Pick a random winner
-        const submissionsSnapshot = await db.ref(`submissions/${today}`).once('value');
-        const submissions = submissionsSnapshot.val() || {};
-        const entries = Object.values(submissions);
-
-        if (entries.length > 0) {
-          const randomUser = entries[Math.floor(Math.random() * entries.length)];
-          await db.ref(`winners/${today}`).set(randomUser);
-          winner = randomUser;
-        }
-      }
-    }
-
-    if (winner) {
-      document.getElementById('today-winner').classList.remove('hidden');
-      document.getElementById('winner-name').textContent = `@${winner}`;
-    }
-  }
-
-  window.onload = function() {
-    loadUserList();
-    checkWinner();
-  }
+  });
 </script>
 
 </body>
