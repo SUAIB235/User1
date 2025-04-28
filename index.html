@@ -4,98 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Daily $1 Giveaway</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #ffffff;
+      background: #f0f4f8;
+      color: #333;
       text-align: center;
       overflow-x: hidden;
     }
     .container {
-      padding: 3rem 1rem;
-      max-width: 500px;
-      margin: auto;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      margin-top: 3rem;
+      padding: 2rem;
     }
     h1 {
       font-size: 2.5rem;
-      color: #00d2ff;
-      margin-bottom: 1rem;
+      color: #4f46e5;
+      margin-bottom: 0.5rem;
     }
     p {
-      color: #cccccc;
-      font-size: 1rem;
+      color: #555;
     }
     .form-box {
       margin: 2rem 0;
     }
     input {
       padding: 0.8rem;
-      width: 70%;
-      max-width: 280px;
-      border: 2px solid #00d2ff;
-      border-radius: 12px;
-      background: #1f1f1f;
-      color: #fff;
+      width: 250px;
+      border: 2px solid #4f46e5;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
       outline: none;
-      margin-bottom: 1rem;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      margin-right: 10px;
+      font-size: 1rem;
     }
     button {
-      padding: 0.8rem 1.5rem;
+      padding: 0.8rem 1.2rem;
       border: none;
-      background: linear-gradient(135deg, #00d2ff, #3a47d5);
-      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      border-radius: 8px;
       color: white;
       cursor: pointer;
       font-weight: bold;
-      transition: background 0.4s;
+      font-size: 1rem;
     }
     button:hover {
-      background: linear-gradient(135deg, #3a47d5, #00d2ff);
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
     }
     .error {
-      color: #ff4c4c;
-      margin-top: 1rem;
+      color: #e11d48;
+      margin-top: 0.5rem;
     }
     .winner-box {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid #00d2ff;
-      padding: 1rem;
+      background: #ffffff;
+      border: 2px solid #4f46e5;
+      padding: 1.5rem;
       margin-top: 2rem;
       border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0% { box-shadow: 0 0 5px #00d2ff; }
-      50% { box-shadow: 0 0 20px #00d2ff; }
-      100% { box-shadow: 0 0 5px #00d2ff; }
+      0% { box-shadow: 0 0 5px #4f46e5; }
+      50% { box-shadow: 0 0 20px #4f46e5; }
+      100% { box-shadow: 0 0 5px #4f46e5; }
     }
     #winnerName {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-top: 1rem;
-      font-weight: bold;
-      color: #00ffd0;
+      color: #16a34a;
+    }
+    .leaderboard {
+      margin-top: 3rem;
+    }
+    .leaderboard h2 {
+      color: #4f46e5;
+      margin-bottom: 1rem;
     }
     #userList {
       list-style: none;
       padding: 0;
-      margin-top: 1rem;
+      max-width: 300px;
+      margin: 0 auto;
     }
     #userList li {
-      background: #1f1f1f;
-      margin: 0.4rem auto;
-      width: 200px;
-      padding: 0.5rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      margin: 0.4rem 0;
+      padding: 0.8rem;
       border-radius: 10px;
-      font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
     canvas#confetti-canvas {
       position: fixed;
@@ -104,15 +104,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 999;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Daily $1 Giveaway</h1>
-    <p>Enter your Telegram username to join!</p>
-
+    <p>Enter your Telegram username below!</p>
+    
     <div class="form-box" id="formBox">
       <input type="text" id="username" placeholder="@yourusername">
       <button onclick="submitUsername()">Submit</button>
@@ -124,15 +123,20 @@
       <p id="winnerName">Loading...</p>
     </div>
 
-    <h2 style="margin-top: 2rem;">Leaderboard</h2>
-    <ul id="userList"></ul>
+    <div class="leaderboard">
+      <h2>Leaderboard</h2>
+      <ul id="userList"></ul>
+    </div>
   </div>
 
   <canvas id="confetti-canvas"></canvas>
 
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+
   <script>
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
       authDomain: "dailygiveaway-43994.firebaseapp.com",
@@ -155,11 +159,21 @@
 
     const today = new Date().toISOString().split('T')[0];
 
-    checkSubmissionStatus();
+    function showError(message) {
+      errorMsg.textContent = message;
+    }
+
+    function hideForm() {
+      formBox.style.display = 'none';
+    }
+
+    function showWinnerBox() {
+      winnerBox.style.display = 'block';
+      startConfetti();
+    }
 
     async function submitUsername() {
       const username = usernameInput.value.trim();
-
       if (!username.startsWith('@') || username.length < 4) {
         showError("Please enter a valid Telegram username!");
         return;
@@ -173,31 +187,13 @@
 
       await database.ref(`submissions/${today}/${username}`).set(true);
       localStorage.setItem('submittedDate', today);
+
       usernameInput.value = '';
       errorMsg.textContent = '';
       hideForm();
+      showWinnerBox();
       loadUsernames();
-    }
-
-    function showError(message) {
-      errorMsg.textContent = message;
-    }
-
-    function checkSubmissionStatus() {
-      const submittedDate = localStorage.getItem('submittedDate');
-      if (submittedDate === today) {
-        hideForm();
-      } else {
-        showForm();
-      }
-    }
-
-    function hideForm() {
-      formBox.style.display = 'none';
-    }
-
-    function showForm() {
-      formBox.style.display = 'block';
+      loadWinner();
     }
 
     async function loadUsernames() {
@@ -215,55 +211,42 @@
 
     async function loadWinner() {
       const snapshot = await database.ref(`winners/${today}`).get();
-
       if (snapshot.exists()) {
         winnerName.textContent = snapshot.val();
         winnerBox.style.display = 'block';
-      }
-    }
-
-    function autoPickWinner() {
-      const now = new Date();
-      if (now.getHours() === 19 && now.getMinutes() === 0) {
-        pickWinner();
+      } else {
+        winnerName.textContent = "Not picked yet!";
       }
     }
 
     async function pickWinner() {
       const snapshot = await database.ref(`submissions/${today}`).get();
+      if (!snapshot.exists()) return;
 
-      if (snapshot.exists()) {
-        const usernames = Object.keys(snapshot.val());
-        const randomIndex = Math.floor(Math.random() * usernames.length);
-        const winner = usernames[randomIndex];
+      const winnerSnapshot = await database.ref(`winners/${today}`).get();
+      if (winnerSnapshot.exists()) return; // already picked
 
-        await database.ref(`winners/${today}`).set(winner);
-        winnerName.textContent = winner;
-        winnerBox.style.display = 'block';
-        startConfetti();
-      }
+      const usernames = Object.keys(snapshot.val());
+      const randomIndex = Math.floor(Math.random() * usernames.length);
+      const winner = usernames[randomIndex];
+
+      await database.ref(`winners/${today}`).set(winner);
+      winnerName.textContent = winner;
+      showWinnerBox();
     }
 
-    // Confetti
     function startConfetti() {
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
-
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
 
       const particles = [];
       for (let i = 0; i < 100; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 4 + 2,
+          r: Math.random() * 4 + 1,
           d: Math.random() * 50,
-          color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
           tilt: Math.random() * 10 - 10
         });
       }
@@ -293,9 +276,23 @@
       setInterval(draw, 30);
     }
 
-    loadWinner();
+    function autoPickWinnerEveryMinute() {
+      const now = new Date();
+      if (now.getHours() === 19 && now.getMinutes() === 0) {
+        pickWinner();
+      }
+    }
+
+    // Init
+    const submittedDate = localStorage.getItem('submittedDate');
+    if (submittedDate === today) {
+      hideForm();
+      showWinnerBox();
+    }
+
     loadUsernames();
-    setInterval(autoPickWinner, 60000); // check every minute
+    loadWinner();
+    setInterval(autoPickWinnerEveryMinute, 60000);
   </script>
 </body>
 </html>
