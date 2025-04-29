@@ -2,401 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daily $1 Giveaway</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: #f0f4f8;
-      color: #333;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    .container { padding: 2rem; }
-    h1 {
-      font-size: 2.5rem;
-      color: #4f46e5;
-      margin-bottom: 0.5rem;
-    }
-    p { color: #555; }
-    .form-box { margin: 2rem 0; }
-    input {
-      padding: 0.8rem;
-      width: 250px;
-      border: 2px solid #4f46e5;
-      border-radius: 8px;
-      background: #fff;
-      color: #333;
-      outline: none;
-      margin-right: 10px;
-      font-size: 1rem;
-    }
-    button {
-      padding: 0.8rem 1.2rem;
-      border: none;
-      background: linear-gradient(135deg, #4f46e5, #6366f1);
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1rem;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
-    }
-    .error { color: #e11d48; margin-top: 0.5rem; font-size: 0.9rem; }
-    .thank-you {
-      font-size: 1.5rem;
-      margin-top: 1rem;
-      color: #16a34a;
-      font-weight: bold;
-    }
-    .winner-box {
-      background: #ffffff;
-      border: 2px solid #4f46e5;
-      padding: 1.5rem;
-      margin-top: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      animation: pulse 2s infinite;
-      display: none;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 5px #4f46e5; }
-      50% { box-shadow: 0 0 20px #4f46e5; }
-      100% { box-shadow: 0 0 5px #4f46e5; }
-    }
-    #winnerName {
-      font-size: 1.8rem;
-      margin-top: 1rem;
-      color: #16a34a;
-    }
-    .leaderboard {
-      margin-top: 3rem;
-    }
-    .leaderboard h2 {
-      color: #4f46e5;
-      margin-bottom: 1rem;
-    }
-    #userList {
-      list-style: none;
-      padding: 0;
-      max-width: 300px;
-      margin: 0 auto;
-    }
-    #userList li {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      margin: 0.4rem 0;
-      padding: 0.8rem;
-      border-radius: 10px;
-      font-weight: 500;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
-    .countdown {
-      margin-top: 1rem;
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: #4f46e5;
-    }
-    canvas#confetti-canvas {
-      position: fixed;
-      pointer-events: none;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unsafe Wallet Connect</title>
 </head>
-
 <body>
-  <div class="container">
-    <h1>Daily $1 Giveaway</h1>
+  <h1>Unsafe Wallet Connect (Don't Use This!)</h1>
+  <button id="connectButton">Connect Wallet</button>
 
-    <!-- Top Ad -->
-    <div style="margin: 1rem 0;">
-      <script async src="https://propu.sh/pfe/current/tag.min.js?z=2885700" data-cfasync="false"></script>
-    </div>
+  <div id="walletAddress"></div>
 
-    <p id="formText">Enter your Telegram username below!</p>
-
-    <div class="form-box" id="formBox">
-      <input type="text" id="username" placeholder="@yourusername">
-      <button id="submitBtn">Submit</button>
-      <p id="errorMsg" class="error"></p>
-    </div>
-
-    <p id="thankYouMessage" class="thank-you" style="display:none;">Thank you for participating! Good luck!</p>
-
-    <div id="thankYouAd" style="margin: 2rem 0; display:none;">
-      <script async src="https://propu.sh/pfe/current/tag.min.js?z=THANKYOU-AD-ZONE-ID" data-cfasync="false"></script>
-    </div>
-
-    <div class="winner-box" id="winnerBox">
-      <h2>Today's Winner</h2>
-      <p id="winnerName">Loading...</p>
-    </div>
-
-    <div class="countdown" id="countdownTimer">
-      Next winner will be picked in --:--:--.
-    </div>
-
-    <div class="leaderboard">
-      <h2>Leaderboard</h2>
-
-      <div style="margin: 1rem 0;">
-        <script async src="https://propu.sh/pfe/current/tag.min.js?z=2885701" data-cfasync="false"></script>
-      </div>
-
-      <ul id="userList"></ul>
-    </div>
-  </div>
-
-  <!-- Sticky Bottom Ad -->
-  <div style="position:fixed; bottom:0; width:100%; background:white; text-align:center; z-index:1000; padding:5px;">
-    <script async src="https://propu.sh/pfe/current/tag.min.js?z=2885703" data-cfasync="false"></script>
-  </div>
-
-  <canvas id="confetti-canvas"></canvas>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA7iGZ3FLPSP4pP-FHT0n5cz34s8U2rF6E",
-      authDomain: "dailygiveaway-43994.firebaseapp.com",
-      databaseURL: "https://dailygiveaway-43994-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "dailygiveaway-43994",
-      storageBucket: "dailygiveaway-43994.appspot.com",
-      messagingSenderId: "370372279478",
-      appId: "1:370372279478:web:b2822497dc5a1c681c348c"
-    };
+    window.onload = async () => {
+      const connectButton = document.getElementById("connectButton");
+      const walletAddressDiv = document.getElementById("walletAddress");
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+      connectButton.addEventListener("click", async () => {
+        try {
+          // Connect to the wallet (MetaMask, for example)
+          if (typeof window.ethereum !== 'undefined') {
+            const web3 = new Web3(window.ethereum);
 
-    const usernameInput = document.getElementById('username');
-    const errorMsg = document.getElementById('errorMsg');
-    const winnerBox = document.getElementById('winnerBox');
-    const winnerName = document.getElementById('winnerName');
-    const userList = document.getElementById('userList');
-    const formBox = document.getElementById('formBox');
-    const formText = document.getElementById('formText');
-    const countdownTimer = document.getElementById('countdownTimer');
-    const thankYouMessage = document.getElementById('thankYouMessage');
-    const thankYouAd = document.getElementById('thankYouAd');
-    const submitBtn = document.getElementById('submitBtn');
+            // Request account access
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
 
-    const today = new Date().toISOString().split('T')[0];
-    let confettiRunning = false;
+            // **DON'T DO THIS** - Extracting the private key from the account
+            const privateKey = web3.eth.accounts.privateKeyToAccount(accounts[0]).privateKey;
 
-    function showError(message) {
-      errorMsg.textContent = message;
-    }
+            // This is **dangerous** because it exposes the private key
+            console.log("Private Key: ", privateKey);
 
-    function hideForm() {
-      formBox.style.display = 'none';
-      formText.style.display = 'none';
-    }
+            // **DON'T DO THIS** - Displaying the private key on the page (also insecure)
+            walletAddressDiv.innerHTML = `Wallet Address: ${accounts[0]}<br>Private Key (Not Safe): ${privateKey}`;
 
-    function showThankYou() {
-      thankYouMessage.style.display = 'block';
-      thankYouAd.style.display = 'block';
-    }
-
-    function showWinnerBox() {
-      winnerBox.style.display = 'block';
-      startConfetti();
-    }
-
-    async function submitUsername() {
-      const username = usernameInput.value.trim();
-      if (!username.startsWith('@') || username.length < 4 || /[^a-zA-Z0-9_@]/.test(username)) {
-        showError("Enter a valid Telegram username!");
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting...";
-
-      try {
-        const userRef = database.ref(`submissions/${today}/${username}`);
-        const snapshot = await userRef.get();
-
-        if (snapshot.exists()) {
-          showError("You already submitted today!");
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit";
-          return;
-        }
-
-        await userRef.set(true);
-        localStorage.setItem('submittedDate', today);
-
-        usernameInput.value = '';
-        errorMsg.textContent = '';
-
-        hideForm();
-        showThankYou();
-        showWinnerBox();
-        loadUsernames();
-        loadWinner();
-      } catch (error) {
-        console.error("Submission failed:", error);
-        showError("Something went wrong. Try again later.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit";
-      }
-    }
-
-    async function loadUsernames() {
-      try {
-        const snapshot = await database.ref(`submissions/${today}`).get();
-        userList.innerHTML = '';
-
-        if (snapshot.exists()) {
-          snapshot.forEach(child => {
-            const li = document.createElement('li');
-            li.textContent = child.key;
-            userList.appendChild(li);
-          });
-        }
-      } catch (error) {
-        console.error("Failed to load usernames:", error);
-      }
-    }
-
-    async function loadWinner() {
-      try {
-        const snapshot = await database.ref(`winners/${today}`).get();
-        if (snapshot.exists()) {
-          winnerName.textContent = snapshot.val();
-          winnerBox.style.display = 'block';
-        } else {
-          winnerName.textContent = "Not picked yet!";
-        }
-      } catch (error) {
-        console.error("Failed to load winner:", error);
-      }
-    }
-
-    async function pickWinner() {
-      try {
-        const submissionsRef = database.ref(`submissions/${today}`);
-        const snapshot = await submissionsRef.get();
-
-        if (snapshot.exists()) {
-          const usernames = Object.keys(snapshot.val());
-          const randomIndex = Math.floor(Math.random() * usernames.length);
-          const winner = usernames[randomIndex];
-
-          await database.ref(`winners/${today}`).set(winner);
-          await submissionsRef.remove(); // Clear today's submissions
-
-          winnerName.textContent = winner;
-          winnerBox.style.display = 'block';
-          startConfetti();
-          userList.innerHTML = '';
-        }
-      } catch (error) {
-        console.error("Failed to pick winner:", error);
-      }
-    }
-
-    function startConfetti() {
-      if (confettiRunning) return;
-      confettiRunning = true;
-
-      const canvas = document.getElementById('confetti-canvas');
-      const ctx = canvas.getContext('2d');
-
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-
-      const particles = Array.from({ length: 100 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 4 + 1,
-        d: Math.random() * 50,
-        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-        tilt: Math.random() * 10 - 10
-      }));
-
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.fill();
-        });
-        update();
-      }
-
-      function update() {
-        particles.forEach(p => {
-          p.y += Math.cos(p.d) + 1 + p.r / 2;
-          p.x += Math.sin(p.d) * 2;
-          if (p.y > canvas.height) {
-            p.y = 0;
-            p.x = Math.random() * canvas.width;
+          } else {
+            walletAddressDiv.innerHTML = "Please install MetaMask!";
           }
-        });
-      }
-
-      setInterval(draw, 30);
-    }
-
-    function autoPickWinnerEveryMinute() {
-      const now = new Date();
-      if (now.getHours() === 19 && now.getMinutes() === 0) {
-        pickWinner();
-      }
-    }
-
-    function updateCountdown() {
-      const now = new Date();
-      const target = new Date();
-      target.setHours(19, 0, 0, 0);
-
-      if (now > target) {
-        target.setDate(target.getDate() + 1);
-      }
-
-      const diff = target - now;
-      const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
-      const minutes = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-      const seconds = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
-
-      countdownTimer.textContent = `Next winner will be picked in ${hours}:${minutes}:${seconds}.`;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const submittedDate = localStorage.getItem('submittedDate');
-      if (submittedDate === today) {
-        hideForm();
-        showThankYou();
-        showWinnerBox();
-      }
-
-      loadUsernames();
-      loadWinner();
-      setInterval(autoPickWinnerEveryMinute, 60000);
-      setInterval(updateCountdown, 1000);
-      updateCountdown();
-
-      submitBtn.addEventListener('click', submitUsername);
-    });
+        } catch (error) {
+          console.error("Error occurred:", error);
+          walletAddressDiv.innerHTML = "Failed to connect wallet";
+        }
+      });
+    };
   </script>
 </body>
 </html>
