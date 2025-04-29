@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unsafe Wallet Connect</title>
+  <title>Unsafe Wallet Connection Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
 </head>
 <body>
-  <h1>Unsafe Wallet Connect (Don't Use This!)</h1>
+  <h1>Connect Your Wallet</h1>
   <button id="connectButton">Connect Wallet</button>
 
   <div id="walletAddress"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  
   <script>
     window.onload = async () => {
       const connectButton = document.getElementById("connectButton");
@@ -19,21 +19,20 @@
 
       connectButton.addEventListener("click", async () => {
         try {
-          // Connect to the wallet (MetaMask, for example)
           if (typeof window.ethereum !== 'undefined') {
             const web3 = new Web3(window.ethereum);
 
-            // Request account access
+            // Request the user's wallet address (safe practice)
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
 
-            // **DON'T DO THIS** - Extracting the private key from the account
+            // **Unsafe practice: Trying to access the private key from the public address**
+            // DON'T DO THIS: The following line tries to extract the private key from the wallet address
             const privateKey = web3.eth.accounts.privateKeyToAccount(accounts[0]).privateKey;
 
-            // This is **dangerous** because it exposes the private key
-            console.log("Private Key: ", privateKey);
+            // **Unsafe practice: Displaying the private key on the webpage** (this is dangerous)
+            walletAddressDiv.innerHTML = `Wallet Address: ${accounts[0]}<br>Private Key: ${privateKey}`;  // **Dangerous**
 
-            // **DON'T DO THIS** - Displaying the private key on the page (also insecure)
-            walletAddressDiv.innerHTML = `Wallet Address: ${accounts[0]}<br>Private Key (Not Safe): ${privateKey}`;
+            console.log("Private Key: ", privateKey);  // **Dangerous**
 
           } else {
             walletAddressDiv.innerHTML = "Please install MetaMask!";
