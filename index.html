@@ -201,11 +201,13 @@ input[type="password"], input[type="text"] {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
         showError('Login successful!');
-        // You can now access the credentials saved in localStorage
-        //const botToken = localStorage.getItem('botToken');
-        //const chatId = localStorage.getItem('chatId');
-        //const binanceApi = localStorage.getItem('binanceApi');
-        //const binanceSecret = localStorage.getItem('binanceSecret');
+        
+         //You can now access the credentials saved in localStorage
+        
+        const botToken = localStorage.getItem('botToken');
+        const chatId = localStorage.getItem('chatId');
+        const binanceApi = localStorage.getItem('binanceApi');
+        const binanceSecret = localStorage.getItem('binanceSecret');
 
         // You can use these values to interact with Binance and Telegram
       } else {
@@ -450,8 +452,8 @@ tp = tp.toFixed(5);
     }
 
     async function sendToTelegram(message) {
-      const botToken = localStorage.getItem('botToken');
-      const chatId = localStorage.getItem('chatId');
+      //const botToken = localStorage.getItem('botToken');
+      //const chatId = localStorage.getItem('chatId');
 
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
@@ -460,8 +462,8 @@ tp = tp.toFixed(5);
       });
     }
 
-        const binanceApi = localStorage.getItem('binanceApi');
-        const binanceSecret = localStorage.getItem('binanceSecret');
+        //const binanceApi = localStorage.getItem('binanceApi');
+        //const binanceSecret = localStorage.getItem('binanceSecret');
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
