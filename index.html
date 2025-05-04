@@ -457,8 +457,7 @@ function getTelegramCredentials() {
 }
 
     async function sendToTelegram(message) {
-      const botToken = localStorage.getItem('botToken');
-      const chatId = localStorage.getItem('chatId');
+      const { botToken, chatId } = getTelegramCredentials();
 
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
@@ -467,8 +466,7 @@ function getTelegramCredentials() {
       });
     }
 
-        //const binanceApi = localStorage.getItem('binanceApi');
-        //const binanceSecret = localStorage.getItem('binanceSecret');
+        const { apiKey: binanceApi, secretKey: binanceSecret } = getBinanceCredentials();
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
