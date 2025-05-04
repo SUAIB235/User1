@@ -203,7 +203,7 @@ button {
 
       // Redirect to login form
       showLoginForm();
-      alert('Sign up successful! You can now login.');
+      showError('Sign up successful! You can now login.');
     }
 
     // Handle login
@@ -213,7 +213,7 @@ button {
 
       if (password === storedPassword) {
         // Successful login, proceed with trading functionality
-        alert('Login successful!');
+        showError('Login successful!');
         // You can now access the credentials saved in localStorage
         const botToken = localStorage.getItem('botToken');
         const chatId = localStorage.getItem('chatId');
