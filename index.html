@@ -212,7 +212,8 @@ button {
       const storedPassword = localStorage.getItem('password');
 
       if (password === storedPassword) {
-        // Successful login, proceed with trading functionality
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
         showError('Login successful!');
         // You can now access the credentials saved in localStorage
         //const botToken = localStorage.getItem('botToken');
