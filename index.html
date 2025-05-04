@@ -464,8 +464,8 @@ tp = tp.toFixed(5);
     }
 
     async function sendToTelegram(message) {
-      const botToken = window.env.BOT_TOKEN;
-      const chatId = window.env.CHAT_ID;
+      const botToken = localStorage.getItem('botToken');
+      const chatId = localStorage.getItem('chatId');
 
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
@@ -474,8 +474,8 @@ tp = tp.toFixed(5);
       });
     }
 
-    const binanceKey = window.env.BINANCE_KEY;
-    const binanceSecret = window.env.BINANCE_SECRET;
+        const binanceApi = localStorage.getItem('binanceApi');
+        const binanceSecret = localStorage.getItem('binanceSecret');
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
