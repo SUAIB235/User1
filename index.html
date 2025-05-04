@@ -1,48 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unsafe Wallet Connection Example</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+  <title>Store Env to GitHub</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    label { display: block; margin-top: 1rem; }
+    input { width: 100%; padding: 0.5rem; }
+    button { margin-top: 1.5rem; padding: 0.7rem 1.5rem; }
+    #result { margin-top: 2rem; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <h1>Connect Your Wallet</h1>
-  <button id="connectButton">Connect Wallet</button>
+  <h2>Env File Generator</h2>
+  <form id="envForm">
+    <label>Password: <input type="password" id="password" required></label>
+    <label>Telegram Bot Token: <input type="text" id="telegramToken" required></label>
+    <label>Telegram Chat ID: <input type="text" id="chatId" required></label>
+    <label>Binance API Key: <input type="text" id="binanceKey" required></label>
+    <label>Binance Secret: <input type="text" id="binanceSecret" required></label>
+    <button type="submit">Submit</button>
+  </form>
 
-  <div id="walletAddress"></div>
-  
+  <div id="result"></div>
+
   <script>
-    window.onload = async () => {
-      const connectButton = document.getElementById("connectButton");
-      const walletAddressDiv = document.getElementById("walletAddress");
+    const firebaseEndpoint = "https://us-central1-YOUR_FIREBASE_PROJECT.cloudfunctions.net/storeEnv"; // replace with your actual URL
 
-      connectButton.addEventListener("click", async () => {
-        try {
-          if (typeof window.ethereum !== 'undefined') {
-            const web3 = new Web3(window.ethereum);
+    document.getElementById('envForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
 
-            // Request the user's wallet address (safe practice)
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const payload = {
+        password: document.getElementById('password').value,
+        telegramToken: document.getElementById('telegramToken').value,
+        chatId: document.getElementById('chatId').value,
+        binanceKey: document.getElementById('binanceKey').value,
+        binanceSecret: document.getElementById('binanceSecret').value
+      };
 
-            // **Unsafe practice: Trying to access the private key from the public address**
-            // DON'T DO THIS: The following line tries to extract the private key from the wallet address
-            const privateKey = web3.eth.accounts.privateKeyToAccount(accounts[0]).privateKey;
+      document.getElementById('result').textContent = "Submitting...";
 
-            // **Unsafe practice: Displaying the private key on the webpage** (this is dangerous)
-            walletAddressDiv.innerHTML = `Wallet Address: ${accounts[0]}<br>Private Key: ${privateKey}`;  // **Dangerous**
+      try {
+        const res = await fetch(firebaseEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-            console.log("Private Key: ", privateKey);  // **Dangerous**
+        const data = await res.json();
 
-          } else {
-            walletAddressDiv.innerHTML = "Please install MetaMask!";
-          }
-        } catch (error) {
-          console.error("Error occurred:", error);
-          walletAddressDiv.innerHTML = "Failed to connect wallet";
+        if (data.link) {
+          document.getElementById('result').innerHTML = `Saved: <a href="${data.link}" target="_blank">${data.link}</a>`;
+        } else {
+          document.getElementById('result').textContent = "Error: " + (data.error || "Unknown error");
         }
-      });
-    };
+      } catch (err) {
+        document.getElementById('result').textContent = "Error: " + err.message;
+      }
+    });
   </script>
 </body>
 </html>
