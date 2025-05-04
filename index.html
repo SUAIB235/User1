@@ -122,14 +122,14 @@ button:hover {
   </style>
 </head>
 <body>
-  <div class="form-container" id="login">
-    <h2>Login</h2>
-    <input type="password" id="password" placeholder="Enter your password">
-    <button onclick="login()">Login</button>
-    <div class="error" id="loginError"></div>
-    <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
-  </div>
-
+  <div id="login">
+    <h2>Enter Password to Access</h2>
+    <input type="password" id="passwordInput" placeholder="Enter Password" />
+    <button onclick="checkPassword()">Submit</button>
+    <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
+    <p id="error" style="color:#FC032FFE;"></p>
+  </div>
+  
   <div class="form-container" id="signupForm" style="display:none;">
     <h2>Sign Up</h2>
     <input type="password" id="newPassword" placeholder="Enter a password">
