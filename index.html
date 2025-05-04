@@ -1,62 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Store Env to GitHub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Futures Signal Scanner</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
-    label { display: block; margin-top: 1rem; }
-    input { width: 100%; padding: 0.5rem; }
-    button { margin-top: 1.5rem; padding: 0.7rem 1.5rem; }
-    #result { margin-top: 2rem; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <h2>Env File Generator</h2>
-  <form id="envForm">
-    <label>Password: <input type="password" id="password" required></label>
-    <label>Telegram Bot Token: <input type="text" id="telegramToken" required></label>
-    <label>Telegram Chat ID: <input type="text" id="chatId" required></label>
-    <label>Binance API Key: <input type="text" id="binanceKey" required></label>
-    <label>Binance Secret: <input type="text" id="binanceSecret" required></label>
-    <button type="submit">Submit</button>
-  </form>
 
-  <div id="result"></div>
+  <div class="form-container" id="loginForm">
+    <h2>Login</h2>
+    <input type="password" id="password" placeholder="Enter your password">
+    <button onclick="login()">Login</button>
+    <div class="error" id="loginError"></div>
+    <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
+  </div>
+
+  <div class="form-container" id="signupForm" style="display:none;">
+    <h2>Sign Up</h2>
+    <input type="password" id="newPassword" placeholder="Enter a password">
+    <input type="text" id="botToken" placeholder="Enter Telegram Bot Token">
+    <input type="text" id="chatId" placeholder="Enter Telegram Chat ID">
+    <input type="text" id="binanceApi" placeholder="Enter Binance API Key">
+    <input type="text" id="binanceSecret" placeholder="Enter Binance Secret Key">
+    <button onclick="signup()">Sign Up</button>
+    <div class="error" id="signupError"></div>
+    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+  </div>
 
   <script>
-    const firebaseEndpoint = "https://us-central1-YOUR_FIREBASE_PROJECT.cloudfunctions.net/storeEnv"; // replace with your actual URL
+    // Function to show login form
+    function showLoginForm() {
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+    }
 
-    document.getElementById('envForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    // Function to show signup form
+    function showSignupForm() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'block';
+    }
 
-      const payload = {
-        password: document.getElementById('password').value,
-        telegramToken: document.getElementById('telegramToken').value,
-        chatId: document.getElementById('chatId').value,
-        binanceKey: document.getElementById('binanceKey').value,
-        binanceSecret: document.getElementById('binanceSecret').value
-      };
+    // Handle sign up
+    function signup() {
+      const password = document.getElementById('newPassword').value;
+      const botToken = document.getElementById('botToken').value;
+      const chatId = document.getElementById('chatId').value;
+      const binanceApi = document.getElementById('binanceApi').value;
+      const binanceSecret = document.getElementById('binanceSecret').value;
 
-      document.getElementById('result').textContent = "Submitting...";
-
-      try {
-        const res = await fetch(firebaseEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        if (data.link) {
-          document.getElementById('result').innerHTML = `Saved: <a href="${data.link}" target="_blank">${data.link}</a>`;
-        } else {
-          document.getElementById('result').textContent = "Error: " + (data.error || "Unknown error");
-        }
-      } catch (err) {
-        document.getElementById('result').textContent = "Error: " + err.message;
+      if (!password || !botToken || !chatId || !binanceApi || !binanceSecret) {
+        document.getElementById('signupError').textContent = 'All fields are required!';
+        return;
       }
-    });
+
+      // Store user details in localStorage
+      localStorage.setItem('password', password);
+      localStorage.setItem('botToken', botToken);
+      localStorage.setItem('chatId', chatId);
+      localStorage.setItem('binanceApi', binanceApi);
+      localStorage.setItem('binanceSecret', binanceSecret);
+
+      // Redirect to login form
+      showLoginForm();
+      alert('Sign up successful! You can now login.');
+    }
+
+    // Handle login
+    function login() {
+      const password = document.getElementById('password').value;
+      const storedPassword = localStorage.getItem('password');
+
+      if (password === storedPassword) {
+        // Successful login, proceed with trading functionality
+        alert('Login successful!');
+        // You can now access the credentials saved in localStorage
+        const botToken = localStorage.getItem('botToken');
+        const chatId = localStorage.getItem('chatId');
+        const binanceApi = localStorage.getItem('binanceApi');
+        const binanceSecret = localStorage.getItem('binanceSecret');
+
+        console.log('Bot Token:', botToken);
+        console.log('Chat ID:', chatId);
+        console.log('Binance API Key:', binanceApi);
+        console.log('Binance Secret Key:', binanceSecret);
+
+        // You can use these values to interact with Binance and Telegram
+      } else {
+        document.getElementById('loginError').textContent = 'Incorrect password!';
+      }
+    }
   </script>
+
 </body>
 </html>
