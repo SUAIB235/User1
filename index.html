@@ -90,35 +90,36 @@ button:hover {
   background-color: #0284c7;
   color: #ffffff;
 }
-body {
-      font-family: Arial, sans-serif;
-    }
     .form-container {
-      max-width: 400px;
-      margin: auto;
-      text-align: center;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    input[type="password"], input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      padding: 10px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-    }
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff; /* optional */
+}
+
+input[type="password"], input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* ensures padding doesn't overflow width */
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
     button:hover {
       background-color: #45a049;
     }
