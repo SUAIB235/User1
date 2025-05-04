@@ -5,34 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
 
-#passwordInput {
-  padding: 10px;
-  font-size: 16px;
-  width: 220px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background-color: #eeeeee;
-  color: #000000;
-  margin-bottom: 10px;
-  display: block;
-}
-input[type="password2"], input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin: auto;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-.form-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-    
 button[type="submit"] {
   padding: 10px 20px;
   background-color: #22c55e;
@@ -122,28 +94,9 @@ button:hover {
   </style>
 </head>
 <body>
-  <div id="login">
-    <h2>Enter Password to Access</h2>
-    <input type="password" id="passwordInput" placeholder="Enter Password" />
-    <button onclick="checkPassword()">Submit</button>
-    <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
-    <p id="error" style="color:#FC032FFE;"></p>
-  </div>
   
-  <div class="form-container" id="signupForm" style="display:none;">
-    <h2>Sign Up</h2>
-    <input type="password2" id="newPassword" placeholder="Enter a password">
-    <input type="text" id="botToken" placeholder="Enter Telegram Bot Token">
-    <input type="text" id="chatId" placeholder="Enter Telegram Chat ID">
-    <input type="text" id="binanceApi" placeholder="Enter Binance API Key">
-    <input type="text" id="binanceSecret" placeholder="Enter Binance Secret Key">
-    <button onclick="signup()">Sign Up</button>
-    <div class="error" id="signupError"></div>
-    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
-  </div>
-
   <!-- Main Content (Hidden until password is correct) -->
-  <div id="mainContent" style="display:none;">
+  <div id="mainContent">
     <h2>Crypto Futures Signal Scanner</h2>
     <button onclick="scan()">Scan Now</button>
   <div id="statsContainer" style="display: flex; align-items: center; gap: 5px; margin-top: 10px; background-color: #ffffff;
@@ -157,38 +110,12 @@ button:hover {
     <div id="output">Loading...</div>
   </div>
 
-<script>
-    // Function to show login form
-    function showLoginForm() {
-      document.getElementById('signupForm').style.display = 'none';
-      document.getElementById('login').style.display = 'block';
-    }
-
-    // Function to show signup form
-    function showSignupForm() {
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('signupForm').style.display = 'block';
-    }
-  
   <script src="env.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
   <script> 
     
 let scanInterval = null;
 let autoScanActive = false;
-    
-      const correctPassword = window.env.PASS_WORD;
-      function checkPassword () {
-      const input = document.getElementById("passwordInput").value;
-      const error = document.getElementById("error");
-
-      if (input === correctPassword) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
-      } else {
-        error.innerText = "Incorrect password.";
-      }
-    }
 
     const cooldowns = {};
     const COOLDOWN_MINUTES = 60;
@@ -718,4 +645,4 @@ window.onload = () => {
     
   </script>
 </body>
-</html>
+  </html>
