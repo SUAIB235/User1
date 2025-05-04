@@ -208,17 +208,8 @@ button {
 
     // Handle login
     function login() {
-  const inputPassword = document.getElementById('passwordInput').value;
-  const storedPassword = localStorage.getItem('password');
-  const error = document.getElementById('error');
-
-  if (inputPassword === storedPassword) {
-    document.getElementById("login").style.display = "none";
-    document.getElementById("mainContent").style.display = "block";
-  } else {
-    error.innerText = "Incorrect password.";
-  }
-}
+      const password = document.getElementById('password').value;
+      const storedPassword = localStorage.getItem('password');
 
       if (password === storedPassword) {
         // Successful login, proceed with trading functionality
