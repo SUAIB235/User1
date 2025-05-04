@@ -201,14 +201,6 @@ input[type="password"], input[type="text"] {
         document.getElementById("mainContent").style.display = "block";
         showError('Login successful!');
         
-         //You can now access the credentials saved in localStorage
-        
-        //const botToken = localStorage.getItem('botToken');
-        //const chatId = localStorage.getItem('chatId');
-        const binanceApi = localStorage.getItem('binanceApi');
-        const binanceSecret = localStorage.getItem('binanceSecret');
-
-        // You can use these values to interact with Binance and Telegram
       } else {
         document.getElementById('loginError').textContent = 'Incorrect password!';
       }
@@ -449,6 +441,20 @@ tp = tp.toFixed(5);
       }
       return atr;
     }
+
+function getBinanceCredentials() {
+  return {
+    apiKey: localStorage.getItem('binanceApi'),
+    secretKey: localStorage.getItem('binanceSecret')
+  };
+}
+
+function getTelegramCredentials() {
+  return {
+    botToken: localStorage.getItem('botToken'),
+    chatId: localStorage.getItem('chatId')
+  };
+}
 
     async function sendToTelegram(message) {
       const botToken = localStorage.getItem('botToken');
