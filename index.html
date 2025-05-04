@@ -203,8 +203,8 @@ input[type="password"], input[type="text"] {
         
          //You can now access the credentials saved in localStorage
         
-        const botToken = localStorage.getItem('botToken');
-        const chatId = localStorage.getItem('chatId');
+        //const botToken = localStorage.getItem('botToken');
+        //const chatId = localStorage.getItem('chatId');
         const binanceApi = localStorage.getItem('binanceApi');
         const binanceSecret = localStorage.getItem('binanceSecret');
 
@@ -451,8 +451,8 @@ tp = tp.toFixed(5);
     }
 
     async function sendToTelegram(message) {
-      //const botToken = localStorage.getItem('botToken');
-      //const chatId = localStorage.getItem('chatId');
+      const botToken = localStorage.getItem('botToken');
+      const chatId = localStorage.getItem('chatId');
 
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
