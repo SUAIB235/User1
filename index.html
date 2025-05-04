@@ -210,31 +210,6 @@ button {
     function login() {
       const password = document.getElementById('password').value;
       const storedPassword = localStorage.getItem('password');
-
-      if (password === storedPassword) {
-        // Successful login, proceed with trading functionality
-        showError('Login successful!');
-        // You can now access the credentials saved in localStorage
-        const botToken = localStorage.getItem('botToken');
-        const chatId = localStorage.getItem('chatId');
-        const binanceApi = localStorage.getItem('binanceApi');
-        const binanceSecret = localStorage.getItem('binanceSecret');
-
-        console.log('Bot Token:', botToken);
-        console.log('Chat ID:', chatId);
-        console.log('Binance API Key:', binanceApi);
-        console.log('Binance Secret Key:', binanceSecret);
-
-        // You can use these values to interact with Binance and Telegram
-      } else {
-        document.getElementById('loginError').textContent = 'Incorrect password!';
-      }
-    }
-    
-let scanInterval = null;
-let autoScanActive = false;
-
-    const correctPassword = window.env.PASS_WORD;
       function checkPassword () {
       const input = document.getElementById("passwordInput").value;
       const error = document.getElementById("error");
@@ -246,6 +221,24 @@ let autoScanActive = false;
         error.innerText = "Incorrect password.";
       }
     }
+      
+      if (password === storedPassword) {
+        // Successful login, proceed with trading functionality
+        showError('Login successful!');
+        // You can now access the credentials saved in localStorage
+        //const botToken = localStorage.getItem('botToken');
+        //const chatId = localStorage.getItem('chatId');
+        //const binanceApi = localStorage.getItem('binanceApi');
+        //const binanceSecret = localStorage.getItem('binanceSecret');
+
+        // You can use these values to interact with Binance and Telegram
+      } else {
+        document.getElementById('loginError').textContent = 'Incorrect password!';
+      }
+    }
+    
+let scanInterval = null;
+let autoScanActive = false;
     
     const cooldowns = {};
     const COOLDOWN_MINUTES = 60;
