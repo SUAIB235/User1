@@ -457,9 +457,8 @@ function getTelegramCredentials() {
 }
   
     async function sendToTelegram(message) {
-      const chatId = localStorage.getItem('chatId');
-      const botToken = localStorage.getItem('botToken');
-      
+      const { botToken, chatId } = getTelegramCredentials();
+
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
