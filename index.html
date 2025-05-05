@@ -183,7 +183,7 @@ input[type="password"], input[type="text"] {
       localStorage.setItem('password', password);
       localStorage.setItem('botToken', botToken);
       localStorage.setItem('chatId', chatId);
-      localStorage.setItem('binanceApi', binanceKey);
+      localStorage.setItem('binanceApi', binanceApi);
       localStorage.setItem('binanceSecret', binanceSecret);
 
       // Redirect to login form
@@ -454,7 +454,7 @@ tp = tp.toFixed(5);
       });
     }
 
-        const binanceApi = localStorage.getItem('binanceKey');
+        const binanceKey = localStorage.getItem('binanceApi');
         const binanceSecret = localStorage.getItem('binanceSecret');
 
 async function placeTrade(symbol, side, entry, tp, sl) {
