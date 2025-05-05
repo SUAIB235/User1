@@ -200,10 +200,6 @@ input[type="password"], input[type="text"] {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
         showError('Login successful!');
-
-        const binanceKey = localStorage.getItem('binanceApi');
-        const binanceSecret = localStorage.getItem('binanceSecret');
-
         
       } else {
         document.getElementById('loginError').textContent = 'Incorrect password!';
@@ -446,7 +442,20 @@ tp = tp.toFixed(5);
       return atr;
     }
 
+function getBinanceCredentials() {
+  return {
+    apiKey: localStorage.getItem('binanceApi'),
+    secretKey: localStorage.getItem('binanceSecret')
+  };
+}
 
+function getTelegramCredentials() {
+  return {
+    botToken: localStorage.getItem('botToken'),
+    chatId: localStorage.getItem('chatId')
+  };
+}
+  
     async function sendToTelegram(message) {
       const chatId = localStorage.getItem('chatId');
       const botToken = localStorage.getItem('botToken');
@@ -458,6 +467,8 @@ tp = tp.toFixed(5);
       });
     }
 
+const { apiKey: binanceKey, secretKey: binanceSecret } = getBinanceCredentials();
+ 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
     const { pricePrecision, quantityPrecision } = await getPrecisionInfo(symbol);
