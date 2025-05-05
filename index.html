@@ -171,10 +171,10 @@ input[type="password"], input[type="text"] {
       const password = document.getElementById('newPassword').value;
       const botToken = document.getElementById('botToken').value;
       const chatId = document.getElementById('chatId').value;
-      const binanceApi = document.getElementById('binanceApi').value;
+      const binanceApi = document.getElementById('binanceKey').value;
       const binanceSecret = document.getElementById('binanceSecret').value;
 
-      if (!password || !botToken || !chatId || !binanceApi || !binanceSecret) {
+      if (!password || !botToken || !chatId || !binanceKey || !binanceSecret) {
         document.getElementById('signupError').textContent = 'All fields are required!';
         return;
       }
@@ -183,7 +183,7 @@ input[type="password"], input[type="text"] {
       localStorage.setItem('password', password);
       localStorage.setItem('botToken', botToken);
       localStorage.setItem('chatId', chatId);
-      localStorage.setItem('binanceApi', binanceApi);
+      localStorage.setItem('binanceKey', binanceKey);
       localStorage.setItem('binanceSecret', binanceSecret);
 
       // Redirect to login form
@@ -444,8 +444,8 @@ tp = tp.toFixed(5);
 
 function getBinanceCredentials() {
   return {
-    apiKey: localStorage.getItem('binanceApi'),
-    secretKey: localStorage.getItem('binanceSecret')
+    binanceKey: localStorage.getItem('binanceKey'),
+    binanceSecret: localStorage.getItem('binanceSecret')
   };
 }
 
@@ -466,7 +466,7 @@ function getTelegramCredentials() {
       });
     }
 
-        const { apiKey, secretKey } = getBinanceCredentials();
+        const { binanceKey:binanceKey, binanceSecret:binanceSecret } = getBinanceCredentials();
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
