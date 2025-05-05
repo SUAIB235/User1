@@ -466,7 +466,7 @@ function getTelegramCredentials() {
       });
     }
 
-        const { apiKey: binanceApi, secretKey: binanceSecret } = getBinanceCredentials();
+        const { apiKey, secretKey } = getBinanceCredentials();
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
