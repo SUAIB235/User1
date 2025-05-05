@@ -128,7 +128,6 @@ input[type="password"], input[type="text"] {
   <div class="form-container" id="signupForm" style="display:none;">
     <h2>Sign Up</h2>
     <input type="password" id="newPassword" placeholder="Enter a password">
-    <input type="text" id="botToken" placeholder="Enter Telegram Bot Token">
     <input type="text" id="chatId" placeholder="Enter Telegram Chat ID">
     <input type="text" id="binanceApi" placeholder="Enter Binance API Key">
     <input type="text" id="binanceSecret" placeholder="Enter Binance Secret Key">
@@ -152,6 +151,7 @@ input[type="password"], input[type="text"] {
     <div id="output">Loading...</div>
   </div>
 
+  <script src="env.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
   <script> 
 // Function to show login form
@@ -169,19 +169,17 @@ input[type="password"], input[type="text"] {
     // Handle sign up
     function signup() {
       const password = document.getElementById('newPassword').value;
-      const botToken = document.getElementById('botToken').value;
       const chatId = document.getElementById('chatId').value;
       const binanceApi = document.getElementById('binanceApi').value;
       const binanceSecret = document.getElementById('binanceSecret').value;
 
-      if (!password || !botToken || !chatId || !binanceApi || !binanceSecret) {
+      if (!password || !chatId || !binanceApi || !binanceSecret) {
         document.getElementById('signupError').textContent = 'All fields are required!';
         return;
       }
 
       // Store user details in localStorage
       localStorage.setItem('password', password);
-      localStorage.setItem('botToken', botToken);
       localStorage.setItem('chatId', chatId);
       localStorage.setItem('binanceApi', binanceApi);
       localStorage.setItem('binanceSecret', binanceSecret);
@@ -457,7 +455,7 @@ function getTelegramCredentials() {
 }
   
     async function sendToTelegram(message) {
-      const { botToken, chatId } = getTelegramCredentials();
+      const { chatId } = getTelegramCredentials();
 
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
