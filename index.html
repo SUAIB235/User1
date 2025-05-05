@@ -449,14 +449,14 @@ function getBinanceCredentials() {
 
 function getTelegramCredentials() {
   return {
-    botToken: localStorage.getItem('botToken'),
     chatId: localStorage.getItem('chatId')
   };
 }
   
     async function sendToTelegram(message) {
       const { chatId } = getTelegramCredentials();
-
+      const botToken = window.env.BOT_TOKEN;
+      
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
