@@ -200,6 +200,10 @@ input[type="password"], input[type="text"] {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
         showError('Login successful!');
+
+        const binanceKey = localStorage.getItem('binanceApi');
+        const binanceSecret = localStorage.getItem('binanceSecret');
+
         
       } else {
         document.getElementById('loginError').textContent = 'Incorrect password!';
@@ -453,9 +457,6 @@ tp = tp.toFixed(5);
         body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "HTML" })
       });
     }
-
-        const binanceKey = localStorage.getItem('binanceApi');
-        const binanceSecret = localStorage.getItem('binanceSecret');
 
 async function placeTrade(symbol, side, entry, tp, sl) {
   try {
