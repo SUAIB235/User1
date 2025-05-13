@@ -1,31 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Premium UID Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
     }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 20px;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background-color: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      text-align: center;
+      color: #111827;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+
     input, textarea, button {
       width: 100%;
-      margin-bottom: 10px;
-      padding: 10px;
+      padding: 12px;
       font-size: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
     }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    button {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
     textarea {
-      height: 120px;
+      height: 140px;
+      resize: none;
+      background-color: #f9fafb;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 16px;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>Generate Premium UID (30 Days)</h2>
-  <label for="uid">User UID (deviceCode):</label>
-  <input type="text" id="uid" placeholder="Enter UID (e.g., ae8c8d...)">
-  
-  <button onclick="generate()">Generate JSON</button>
 
-  <textarea id="output" readonly placeholder="Generated JSON will appear here..."></textarea>
+  <div class="container">
+    <h2>Premium UID Generator</h2>
+
+    <label for="uid">Device UID:</label>
+    <input type="text" id="uid" placeholder="e.g., ae8c8ded-bc10...">
+
+    <button onclick="generate()">Generate JSON</button>
+
+    <label for="output">Result:</label>
+    <textarea id="output" readonly placeholder="Generated JSON will appear here..."></textarea>
+  </div>
 
   <script>
     function generate() {
@@ -47,6 +110,6 @@
       document.getElementById("output").value = JSON.stringify(result, null, 2);
     }
   </script>
+
 </body>
 </html>
-
