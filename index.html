@@ -84,7 +84,7 @@
     function generate() {
       const uid = document.getElementById("uid").value.trim();
       if (!uid) {
-        alert("Please enter a UID");
+        showError("Please enter a UID");
         return;
       }
 
@@ -99,6 +99,19 @@
 
       document.getElementById("output").value = JSON.stringify(result, null, 2);
     }
+
+  function showError(msg) {
+  const box = document.createElement('div');
+  box.textContent = msg;
+  box.style.cssText = `
+      position:fixed; top:20px; left:50%; transform:translateX(-50%);
+      max-width:90%; padding:14px 18px;
+      background:#ff4444; color:#fff; font-family:monospace;
+      border-radius:8px; z-index:9999;
+  `;
+  document.body.appendChild(box);
+  setTimeout(()=> box.remove(), 5000);  // disappear after 5 s
+}  
   </script>
 
 </body>
