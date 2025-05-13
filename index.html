@@ -1,1 +1,52 @@
-. 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Premium UID Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    textarea {
+      height: 120px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Generate Premium UID (30 Days)</h2>
+  <label for="uid">User UID (deviceCode):</label>
+  <input type="text" id="uid" placeholder="Enter UID (e.g., ae8c8d...)">
+  
+  <button onclick="generate()">Generate JSON</button>
+
+  <textarea id="output" readonly placeholder="Generated JSON will appear here..."></textarea>
+
+  <script>
+    function generate() {
+      const uid = document.getElementById("uid").value.trim();
+      if (!uid) {
+        alert("Please enter a UID");
+        return;
+      }
+
+      const start = new Date();
+      const expires = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      const result = {
+        uid,
+        start: start.toISOString(),
+        expires: expires.toISOString()
+      };
+
+      document.getElementById("output").value = JSON.stringify(result, null, 2);
+    }
+  </script>
+</body>
+</html>
+
