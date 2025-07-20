@@ -2,37 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TRX Prediction Game</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>TRX Dice Bet</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="style.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tronweb/4.3.6/tronweb.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <h2>🎯 Predict Odd or Even</h2>
-
-    <div id="login">
-      <input type="text" id="wallet" placeholder="Enter TRX Wallet Address" />
-      <button onclick="login()">Login</button>
-    </div>
-
-    <div id="game" style="display:none;">
-      <p>Wallet: <span id="walletDisplay"></span></p>
-      <p>Balance: <span id="balance">10</span> TRX</p>
-
-      <input type="number" id="bet" placeholder="Enter TRX Amount" min="1" />
-      <div>
-        <button onclick="play('odd')">Odd</button>
-        <button onclick="play('even')">Even</button>
-      </div>
-
-      <div id="result"></div>
-      <div>
-        <p>Deposit TRX to: <b>TT9cYfA9Dxv...your-wallet</b></p>
-        <button onclick="copyAddress()">Copy Address</button>
-      </div>
+    <header>
+      <h1><i class="fa-solid fa-dice"></i> TRX Dice Bet</h1>
+      <button id="connectBtn" onclick="connectWallet()"><i class="fa-solid fa-wallet"></i> Connect Wallet</button>
+    </header>
+    
+    <div id="main" style="display:none;">
+      <p><strong>Address:</strong> <span id="addr"></span></p>
+      <p><strong>Balance:</strong> <span id="bal">0</span> TRX</p>
+      
+      <section class="bet-section">
+        <input type="number" id="betAmount" placeholder="Bet Amount (TRX)" min="1"/>
+        <input type="number" id="target" placeholder="Target 1–99" min="1" max="99"/>
+        <button onclick="roll()">🎲 Roll</button>
+      </section>
+      <div id="res"></div>
+      
+      <button onclick="withdraw()">💸 Withdraw</button>
     </div>
   </div>
-
+  
   <script src="script.js"></script>
 </body>
 </html>
