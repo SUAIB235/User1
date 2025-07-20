@@ -1,35 +1,28 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>TRX Dice Bet</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  <link href="style.css" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tronweb/4.3.6/tronweb.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎲 Dice Bet | BNB USDT</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.6/dist/web3.min.js"></script>
+  <script src="main.js" defer></script>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1><i class="fa-solid fa-dice"></i> TRX Dice Bet</h1>
-      <button id="connectBtn" onclick="connectWallet()"><i class="fa-solid fa-wallet"></i> Connect Wallet</button>
-    </header>
-    
-    <div id="main" style="display:none;">
-      <p><strong>Address:</strong> <span id="addr"></span></p>
-      <p><strong>Balance:</strong> <span id="bal">0</span> TRX</p>
-      
-      <section class="bet-section">
-        <input type="number" id="betAmount" placeholder="Bet Amount (TRX)" min="1"/>
-        <input type="number" id="target" placeholder="Target 1–99" min="1" max="99"/>
-        <button onclick="roll()">🎲 Roll</button>
-      </section>
-      <div id="res"></div>
-      
-      <button onclick="withdraw()">💸 Withdraw</button>
+    <h1>🎲 Welcome to Dice USDT Game</h1>
+    <button id="connectBtn">🔗 Connect Wallet</button>
+    <p id="walletAddress"></p>
+    <div id="balanceSection" style="display:none">
+      <p>Your USDT Balance: <span id="usdtBalance">0</span> USDT</p>
+      <a href="game.html" class="playBtn">🎮 Play Dice</a>
+      <a href="withdraw.html" class="withdrawBtn">💸 Withdraw</a>
+    </div>
+    <div class="notice">
+      <p>Deposit USDT (BEP20) to this address:</p>
+      <code>0xf8fc2579f7b8553a221cf3a8009566c16b2d5c9a</code>
+      <p>Minimum Bet: 0.1 USDT | Maximum Bet: 5 USDT</p>
     </div>
   </div>
-  
-  <script src="script.js"></script>
 </body>
 </html>
