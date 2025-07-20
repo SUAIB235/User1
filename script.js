@@ -1,40 +1,28 @@
-let tronWeb;
-let userAddr;
+// main.js
+const connectBtn = document.getElementById('connectBtn');
+const walletAddress = document.getElementById('walletAddress');
+const balanceSection = document.getElementById('balanceSection');
+const usdtBalance = document.getElementById('usdtBalance');
 
-async function connectWallet() {
-  if (!window.tronWeb || !window.tronWeb.ready) return alert('Install TronLink');
-  tronWeb = window.tronWeb; userAddr = tronWeb.defaultAddress.base58;
-  document.getElementById('addr').innerText = userAddr;
-  document.getElementById('connectBtn').style.display = 'none';
-  document.getElementById('main').style.display = 'block';
-  await updateBalance();
-}
+let web3;
+const USDT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // BSC Mainnet
+const USDT_ABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}];
 
-async function updateBalance() {
-  const bal = await tronWeb.trx.getBalance(userAddr);
-  document.getElementById('bal').innerText = (bal/1e6).toFixed(6);
-}
+connectBtn.onclick = async () => {
+  if (window.ethereum) {
+    web3 = new Web3(window.ethereum);
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const accounts = await web3.eth.getAccounts();
+    walletAddress.innerText = accounts[0];
+    balanceSection.style.display = 'block';
+    getUSDTBalance(accounts[0]);
+  } else {
+    alert("Install MetaMask or Trust Wallet browser extension.");
+  }
+};
 
-async function roll() {
-  const bet = parseFloat(document.getElementById('betAmount').value);
-  const target = parseInt(document.getElementById('target').value);
-  if (!bet || bet<1 || !target || target<1||target>99) return alert('Enter valid bet & target');
-  const tx = await tronWeb.transactionBuilder.sendTrx('YOUR_HOUSE_WALLET', bet * 1e6, userAddr);
-  const signed = await tronWeb.trx.sign(tx);
-  const res = await tronWeb.trx.sendRawTransaction(signed);
-  if (!res.result) return alert('TX failed');
-  const roll = Math.floor(Math.random()*100)+1;
-  let win = (target>50 && roll>=(target+1)) || (target<50 && roll<target);
-  const payout = win ? bet * (98/target) : 0;
-  document.getElementById('res').innerText = `Rolled ${roll}! ${ win ? 'You win ' + payout.toFixed(6) + ' TRX' : 'You lose'}.`;
-  await updateBalance();
-}
-
-async function withdraw() {
-  const tx = await fetch('https://your-backend.vercel.app/api/withdraw', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ addr: userAddr })
-  });
-  const json = await tx.json();
-  alert(json.msg);
+async function getUSDTBalance(address) {
+  const contract = new web3.eth.Contract(USDT_ABI, USDT_ADDRESS);
+  const balance = await contract.methods.balanceOf(address).call();
+  usdtBalance.innerText = (balance / 1e18).toFixed(2);
 }
