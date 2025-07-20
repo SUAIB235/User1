@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💸 Withdraw Request</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>💸 Withdraw</h2>
+    <p>Enter amount to withdraw (Min: 10 USDT, Max: 100 USDT)</p>
+    <input
+      type="number"
+      id="withdrawAmount"
+      min="10"
+      max="100"
+      step="1"
+      placeholder="Enter amount"
+    />
+    <button id="withdrawBtn">Request Withdraw</button>
+    <p id="message"></p>
+    <a href="index.html" class="playBtn">🔙 Back to Home</a>
+  </div>
+
+  <script>
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const withdrawAmountInput = document.getElementById('withdrawAmount');
+    const messageP = document.getElementById('message');
+
+    withdrawBtn.addEventListener('click', () => {
+      const amount = parseFloat(withdrawAmountInput.value);
+      if (isNaN(amount) || amount < 10 || amount > 100) {
+        messageP.textContent = '❌ Amount must be between 10 and 100 USDT';
+        messageP.style.color = 'red';
+        return;
+      }
+
+      // Here you would send a request to your backend or email service.
+      // For demo, just show a message:
+      messageP.textContent = `✅ Withdraw request for ${amount} USDT sent! Please wait for manual processing.`;
+      messageP.style.color = 'green';
+
+      // Optionally, reset the input
+      withdrawAmountInput.value = '';
+    });
+  </script>
+</body>
+</html>
