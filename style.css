@@ -1,8 +1,33 @@
-body { font-family: sans-serif; background: #f5f5f5; display:flex; justify-content:center; padding:20px; }
-.container { background:#fff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); width:320px; padding:20px; }
-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-button { background:#007aff;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer; }
-button:hover { opacity:0.9 }
-input { width:100%; padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:4px; }
-.bet-section { margin:20px 0; }
-#res { margin-top:10px; }
+/* style.css */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8f9fa;
+  color: #212529;
+  text-align: center;
+  padding: 30px;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+button, .playBtn {
+  background: #5c67f2;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-size: 16px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button:hover, .playBtn:hover {
+  background: #464ddf;
+}
