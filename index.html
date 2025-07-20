@@ -1,27 +1,58 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎲 Dice Bet | BNB USDT</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.7.6/dist/web3.min.js"></script>
-  <script src="main.js" defer></script>
+  <title>BNB Dice Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>🎲 Welcome to Dice USDT Game</h1>
-    <button id="connectBtn">🔗 Connect Wallet</button>
-    <p id="walletAddress"></p>
-    <div id="balanceSection" style="display:none">
-      <p>Your USDT Balance: <span id="usdtBalance">0</span> USDT</p>
-      <a href="game.html" class="playBtn">🎮 Play Dice</a>
-      <a href="withdraw.html" class="withdrawBtn">💸 Withdraw</a>
-    </div>
-    <div class="notice">
-      <p>Deposit USDT (BEP20) to this address:</p>
-      <code>0xf8fc2579f7b8553a221cf3a8009566c16b2d5c9a</code>
-      <p>Minimum Bet: 0.1 USDT | Maximum Bet: 5 USDT</p>
-    </div>
-  </div>
+  <header>
+    <div class="logo"><i class="fas fa-dice-d20"></i> BNB Dice Game</div>
+  </header>
+
+  <main class="container">
+    <section id="connectSection" class="card">
+      <h2><i class="fas fa-link"></i> Connect Wallet</h2>
+      <p>Please connect your wallet to begin playing the dice game.</p>
+      <button class="btn" onclick="connectWallet()"><i class="fas fa-wallet"></i> Connect Wallet</button>
+    </section>
+
+    <section id="dashboard" class="card hidden">
+      <div class="wallet-info">
+        <p><strong>Connected Wallet:</strong> <span id="userAddress"></span></p>
+        <p><strong>Balance:</strong> <span id="balance">0.00</span> USDT</p>
+      </div>
+
+      <div class="game-section">
+        <h3><i class="fas fa-dice"></i> Over / Under Dice Game</h3>
+        <input type="number" id="betAmount" placeholder="Enter bet amount ($0.1 - $0.5)" min="0.1" max="0.5" step="0.1" />
+        <button class="btn" onclick="rollDice()"><i class="fas fa-play"></i> Roll Dice</button>
+        <div id="diceResult" class="result"></div>
+      </div>
+
+      <div class="deposit-section">
+        <h4><i class="fas fa-arrow-down"></i> Deposit USDT</h4>
+        <p>Send USDT (BEP20) to this address:</p>
+        <div class="deposit-address" id="depositAddress">0xYourDepositAddressHere</div>
+        <p>Your balance will update after the transaction is confirmed.</p>
+      </div>
+
+      <div class="withdraw-section">
+        <h4><i class="fas fa-arrow-up"></i> Withdraw Request</h4>
+        <input type="text" id="withdrawAddress" placeholder="Your BNB Wallet Address">
+        <input type="number" id="withdrawAmount" placeholder="Withdraw amount ($1 - $10)" min="1" max="10">
+        <button class="btn" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Submit Withdraw</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 BNB Dice Game. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
