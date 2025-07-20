@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TRX Prediction Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>🎯 Predict Odd or Even</h2>
+
+    <div id="login">
+      <input type="text" id="wallet" placeholder="Enter TRX Wallet Address" />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="game" style="display:none;">
+      <p>Wallet: <span id="walletDisplay"></span></p>
+      <p>Balance: <span id="balance">10</span> TRX</p>
+
+      <input type="number" id="bet" placeholder="Enter TRX Amount" min="1" />
+      <div>
+        <button onclick="play('odd')">Odd</button>
+        <button onclick="play('even')">Even</button>
+      </div>
+
+      <div id="result"></div>
+      <div>
+        <p>Deposit TRX to: <b>TT9cYfA9Dxv...your-wallet</b></p>
+        <button onclick="copyAddress()">Copy Address</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
