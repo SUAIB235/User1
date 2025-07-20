@@ -1,61 +1,97 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f5f5f5;
-  color: #333;
+  background: linear-gradient(to right, #141e30, #243b55);
+  color: #fff;
   margin: 0;
 }
 header {
-  background: #f7b731;
-  color: #fff;
+  background: #1f4068;
   padding: 20px;
   text-align: center;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
+  color: #f7b731;
 }
 .container {
-  max-width: 700px;
+  max-width: 750px;
   margin: auto;
   padding: 20px;
 }
 .card {
-  background: #fff;
+  background: #273c75;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   margin-top: 20px;
 }
 .btn {
-  background-color: #f7b731;
   border: none;
-  color: white;
   padding: 12px;
-  width: 100%;
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 15px;
   border-radius: 8px;
   cursor: pointer;
+  width: 100%;
 }
+.primary { background: #00a8ff; color: white; }
+.secondary { background: #9c88ff; color: white; }
+.success { background: #4cd137; color: white; }
+.warning { background: #fbc531; color: black; }
+
 input {
   width: 100%;
   padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
+  margin-top: 8px;
+  border: 1px solid #999;
   border-radius: 6px;
+  font-size: 14px;
 }
 .result {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   margin-top: 15px;
   text-align: center;
+  color: #f5f6fa;
 }
 .hidden {
   display: none;
 }
 footer {
-  margin-top: 40px;
+  margin-top: 50px;
   padding: 20px;
-  background: #eee;
+  background: #1e272e;
   text-align: center;
   font-size: 14px;
-  color: #777;
+  color: #aaa;
+}
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.account-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+}
+.account-dropdown {
+  background: #353b48;
+  padding: 10px;
+  border-radius: 8px;
+  position: absolute;
+  right: 30px;
+  margin-top: 10px;
+  width: 220px;
+}
+.small-text {
+  font-size: 12px;
+  word-break: break-all;
+}
+.highlight-box {
+  background: #192a56;
+  padding: 10px;
+  font-family: monospace;
+  word-break: break-all;
+  border-radius: 6px;
 }
