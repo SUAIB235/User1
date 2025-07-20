@@ -1,34 +1,8 @@
-body {
-  background: #111;
-  color: #fff;
-  font-family: sans-serif;
-  display: flex;
-  justify-content: center;
-  padding-top: 50px;
-}
-
-.container {
-  background: #222;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-}
-
-input, button {
-  margin: 10px;
-  padding: 8px;
-  width: 80%;
-  border: none;
-  border-radius: 5px;
-}
-
-button {
-  background: #0f0;
-  color: #000;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #0c0;
-}
+body { font-family: sans-serif; background: #f5f5f5; display:flex; justify-content:center; padding:20px; }
+.container { background:#fff; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); width:320px; padding:20px; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+button { background:#007aff;color:#fff;border:none;padding:10px;border-radius:4px;cursor:pointer; }
+button:hover { opacity:0.9 }
+input { width:100%; padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:4px; }
+.bet-section { margin:20px 0; }
+#res { margin-top:10px; }
