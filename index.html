@@ -16,41 +16,52 @@
   <main class="container">
     <section id="connectSection" class="card">
       <h2><i class="fas fa-link"></i> Connect Wallet</h2>
-      <p>Please connect your wallet to begin playing the dice game.</p>
-      <button class="btn" onclick="connectWallet()"><i class="fas fa-wallet"></i> Connect Wallet</button>
+      <p>Start playing the most exciting crypto dice game on BNB Chain!</p>
+      <button class="btn primary" onclick="connectWallet()"><i class="fas fa-wallet"></i> Connect Wallet</button>
     </section>
 
     <section id="dashboard" class="card hidden">
-      <div class="wallet-info">
-        <p><strong>Connected Wallet:</strong> <span id="userAddress"></span></p>
-        <p><strong>Balance:</strong> <span id="balance">0.00</span> USDT</p>
+      <div class="dashboard-header">
+        <div>
+          <h3><i class="fas fa-coins"></i> Balance: <span id="balance">0.00</span> USDT</h3>
+        </div>
+        <div class="account-menu">
+          <button onclick="toggleAccount()" class="account-btn">
+            <i class="fas fa-user-circle"></i>
+          </button>
+          <div id="accountDropdown" class="account-dropdown hidden">
+            <p><strong>Wallet:</strong><br><span id="userAddress" class="small-text"></span></p>
+            <hr>
+            <button class="btn secondary" onclick="toggleDeposit()">Deposit</button>
+            <button class="btn secondary" onclick="toggleWithdraw()">Withdraw</button>
+          </div>
+        </div>
       </div>
 
       <div class="game-section">
-        <h3><i class="fas fa-dice"></i> Over / Under Dice Game</h3>
-        <input type="number" id="betAmount" placeholder="Enter bet amount ($0.1 - $0.5)" min="0.1" max="0.5" step="0.1" />
-        <button class="btn" onclick="rollDice()"><i class="fas fa-play"></i> Roll Dice</button>
+        <h3><i class="fas fa-dice"></i> Over / Under Dice</h3>
+        <input type="number" id="betAmount" placeholder="Enter bet ($0.1 - $0.5)" min="0.1" max="0.5" step="0.1" />
+        <button class="btn success" onclick="rollDice()"><i class="fas fa-play"></i> Roll Dice</button>
         <div id="diceResult" class="result"></div>
       </div>
 
-      <div class="deposit-section">
+      <div id="depositBox" class="toggle-box hidden">
         <h4><i class="fas fa-arrow-down"></i> Deposit USDT</h4>
-        <p>Send USDT (BEP20) to this address:</p>
-        <div class="deposit-address" id="depositAddress">0xYourDepositAddressHere</div>
-        <p>Your balance will update after the transaction is confirmed.</p>
+        <p>Send USDT (BEP20) to:</p>
+        <div class="highlight-box" id="depositAddress">0xYourDepositAddressHere</div>
       </div>
 
-      <div class="withdraw-section">
-        <h4><i class="fas fa-arrow-up"></i> Withdraw Request</h4>
-        <input type="text" id="withdrawAddress" placeholder="Your BNB Wallet Address">
+      <div id="withdrawBox" class="toggle-box hidden">
+        <h4><i class="fas fa-arrow-up"></i> Withdraw</h4>
+        <input type="text" id="withdrawAddress" placeholder="Your Wallet Address">
         <input type="number" id="withdrawAmount" placeholder="Withdraw amount ($1 - $10)" min="1" max="10">
-        <button class="btn" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Submit Withdraw</button>
+        <button class="btn warning" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Request Withdraw</button>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 BNB Dice Game. All rights reserved.</p>
+    <p>🎲 Powered by BNB Smart Chain | Play Responsibly</p>
   </footer>
 
   <script src="app.js"></script>
