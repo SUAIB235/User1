@@ -65,3 +65,13 @@ async function submitWithdraw() {
     alert("Telegram request failed. Check token and chat ID.");
   }
 }
+
+function toggleAccount() {
+  document.getElementById('accountDropdown').classList.toggle('hidden');
+}
+function toggleDeposit() {
+  document.getElementById('depositBox').classList.toggle('hidden');
+}
+function toggleWithdraw() {
+  document.getElementById('withdrawBox').classList.toggle('hidden');
+}
