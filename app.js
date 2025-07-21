@@ -1,5 +1,5 @@
 let provider, signer, userAddress;
-let balance = 0.00;
+let balance = 5.00;
 const DEPOSIT_ADDRESS = "0xYourDepositAddressHere";
 const TELEGRAM_BOT_TOKEN = "<your_bot_token>";
 const TELEGRAM_CHAT_ID = "<your_chat_id>";
