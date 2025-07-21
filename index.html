@@ -4,59 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TRX Dice Connect</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .dice-animate {
-      animation: bounce 1.5s infinite ease-in-out;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(15deg); }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
-<body class="bg-white text-gray-800 flex flex-col items-center justify-center min-h-screen">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
 
-  <h1 class="text-3xl font-bold mb-2">
-    <i class="fas fa-dice text-gray-600 mr-2 dice-animate"></i>TRX Dice
-  </h1>
-
-  <p class="text-sm text-gray-500 mb-6 text-center max-w-md">
-    Bet TRX on dice. Choose odd or even. Win big on the TRON network!
-  </p>
-
-  <button id="connectBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-    <i class="fas fa-wallet mr-2"></i>Connect Wallet
-  </button>
-
-  <div id="status" class="text-sm text-red-500 mt-4"></div>
+  <div class="text-center">
+    <i class="fas fa-dice fa-4x text-gray-600 mb-4 animate-bounce"></i>
+    <h1 class="text-3xl font-bold mb-2">TRX Dice</h1>
+    <p class="text-sm text-gray-600 mb-6">Crypto-powered dice game. Bet with TRX and win big!</p>
+    <button id="connectBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700 transition">
+      <i class="fas fa-wallet mr-2"></i>Connect Wallet
+    </button>
+    <p id="error" class="text-red-600 text-sm mt-4 hidden">Please use a TRON-compatible wallet like TronLink, Trust Wallet, or Bitget.</p>
+  </div>
 
   <script>
-    // Auto redirect if already connected
-    if (localStorage.getItem("trx_connected") === "true") {
-      window.location.href = "home.html";
-    }
-
-    const btn = document.getElementById("connectBtn");
-    const status = document.getElementById("status");
-
-    btn.addEventListener("click", async () => {
-      try {
-        if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-          throw new Error("Please install TronLink or open in Trust Wallet browser.");
-        }
-
+    document.getElementById("connectBtn").addEventListener("click", async () => {
+      if (window.tronWeb && window.tronWeb.ready) {
         const address = window.tronWeb.defaultAddress.base58;
-        if (!address) throw new Error("Wallet not connected");
-
-        localStorage.setItem("trx_connected", "true");
-        localStorage.setItem("trx_address", address);
-
-        window.location.href = "home.html";
-      } catch (err) {
-        status.textContent = `❌ ${err.message}`;
+        if (address) {
+          localStorage.setItem("trx_address", address);
+          window.location.href = "home.html";
+        }
+      } else {
+        document.getElementById("error").classList.remove("hidden");
       }
+    });
+
+    // Auto redirect if already connected
+    window.addEventListener("load", () => {
+      const addr = localStorage.getItem("trx_address");
+      if (addr) window.location.href = "home.html";
     });
   </script>
 </body>
