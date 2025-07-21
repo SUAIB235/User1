@@ -2,66 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BNB Dice Game</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header>
-    <div class="logo"><i class="fas fa-dice-d20"></i> BNB Dice Game</div>
+    <h1><i class="fas fa-dice"></i> BNB Dice</h1>
   </header>
 
   <main class="container">
-    <section id="connectSection" class="card">
-      <h2><i class="fas fa-link"></i> Connect Wallet</h2>
-      <p>Start playing the most exciting crypto dice game on BNB Chain!</p>
-      <button class="btn primary" onclick="connectWallet()"><i class="fas fa-wallet"></i> Connect Wallet</button>
+    <section id="connectSection" class="centered">
+      <button id="connectButton" onclick="connectWallet()" class="btn primary">
+        <i class="fas fa-wallet"></i> Connect Wallet
+      </button>
     </section>
 
-    <section id="dashboard" class="card hidden">
-      <div class="dashboard-header">
+    <section id="dashboard" class="hidden">
+      <div class="top-bar">
         <div>
-          <h3><i class="fas fa-coins"></i> Balance: <span id="balance">0.00</span> USDT</h3>
+          <span class="label">Address:</span>
+          <span id="walletAddress" class="value"></span>
         </div>
-        <div class="account-menu">
-          <button onclick="toggleAccount()" class="account-btn">
-            <i class="fas fa-user-circle"></i>
-          </button>
-          <div id="accountDropdown" class="account-dropdown hidden">
-            <p><strong>Wallet:</strong><br><span id="userAddress" class="small-text"></span></p>
-            <hr>
-            <button class="btn secondary" onclick="toggleDeposit()">Deposit</button>
-            <button class="btn secondary" onclick="toggleWithdraw()">Withdraw</button>
-          </div>
+        <div>
+          <span class="label">Balance:</span>
+          <span id="balance" class="value">0.00</span> USDT
         </div>
       </div>
 
-      <div class="game-section">
-        <h3><i class="fas fa-dice"></i> Over / Under Dice</h3>
-        <input type="number" id="betAmount" placeholder="Enter bet ($0.1 - $0.5)" min="0.1" max="0.5" step="0.1" />
-        <button class="btn success" onclick="rollDice()"><i class="fas fa-play"></i> Roll Dice</button>
+      <div class="card">
+        <h2>🎲 Choose Even or Odd</h2>
+        <div class="choices">
+          <button class="btn even" onclick="selectChoice('even')">Even</button>
+          <button class="btn odd" onclick="selectChoice('odd')">Odd</button>
+        </div>
+
+        <div class="bet-input">
+          <input type="number" id="betAmount" placeholder="Enter bet ($0.1 - $0.5)" min="0.1" max="0.5" step="0.1" />
+        </div>
+
+        <button class="btn roll" onclick="rollDice()">Roll Dice</button>
         <div id="diceResult" class="result"></div>
       </div>
 
-      <div id="depositBox" class="toggle-box hidden">
-        <h4><i class="fas fa-arrow-down"></i> Deposit USDT</h4>
-        <p>Send USDT (BEP20) to:</p>
-        <div class="highlight-box" id="depositAddress">0xYourDepositAddressHere</div>
+      <div class="card">
+        <h2>📥 Deposit USDT (BEP20)</h2>
+        <p>Send USDT to the address below:</p>
+        <div class="highlight" id="depositAddress">0xYourDepositAddressHere</div>
       </div>
 
-      <div id="withdrawBox" class="toggle-box hidden">
-        <h4><i class="fas fa-arrow-up"></i> Withdraw</h4>
+      <div class="card">
+        <h2>📤 Withdraw</h2>
         <input type="text" id="withdrawAddress" placeholder="Your Wallet Address">
-        <input type="number" id="withdrawAmount" placeholder="Withdraw amount ($1 - $10)" min="1" max="10">
-        <button class="btn warning" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> Request Withdraw</button>
+        <input type="number" id="withdrawAmount" placeholder="Amount ($1 - $10)" min="1" max="10" />
+        <button class="btn withdraw" onclick="submitWithdraw()">
+          <i class="fas fa-paper-plane"></i> Request Withdraw
+        </button>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>🎲 Powered by BNB Smart Chain | Play Responsibly</p>
+    <p>⚡ Built on BNB Smart Chain · Play Responsibly</p>
   </footer>
 
   <script src="app.js"></script>
