@@ -1,97 +1,165 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #141e30, #243b55);
-  color: #fff;
+/* Global Reset */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-header {
-  background: #1f4068;
-  padding: 20px;
-  text-align: center;
-  font-size: 26px;
-  font-weight: bold;
-  color: #f7b731;
-}
-.container {
-  max-width: 750px;
-  margin: auto;
-  padding: 20px;
-}
-.card {
-  background: #273c75;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  margin-top: 20px;
-}
-.btn {
-  border: none;
-  padding: 12px;
-  margin-top: 10px;
-  font-size: 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-}
-.primary { background: #00a8ff; color: white; }
-.secondary { background: #9c88ff; color: white; }
-.success { background: #4cd137; color: white; }
-.warning { background: #fbc531; color: black; }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: 1px solid #999;
-  border-radius: 6px;
-  font-size: 14px;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0d0d0d, #1a1a2e);
+  color: #f1f1f1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-.result {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 15px;
+
+/* Header */
+header {
+  background: #111827;
+  padding: 1rem;
   text-align: center;
-  color: #f5f6fa;
+  border-bottom: 2px solid #00ffd5;
 }
+
+header h1 {
+  font-size: 2rem;
+  color: #00ffd5;
+}
+
+/* Main Container */
+.container {
+  flex: 1;
+  padding: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Sections */
 .hidden {
   display: none;
 }
-footer {
-  margin-top: 50px;
-  padding: 20px;
-  background: #1e272e;
+
+.centered {
   text-align: center;
-  font-size: 14px;
-  color: #aaa;
+  margin-top: 2rem;
 }
-.dashboard-header {
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn.primary {
+  background: #00ffd5;
+  color: #000;
+}
+
+.btn.even {
+  background: #1fc600;
+  color: #000;
+}
+
+.btn.odd {
+  background: #ff007a;
+  color: #fff;
+}
+
+.btn.roll {
+  background: #5a4bff;
+  color: #fff;
+}
+
+.btn.withdraw {
+  background: #facc15;
+  color: #000;
+}
+
+/* Top bar (wallet + balance) */
+.top-bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  background: #202042;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
 }
-.account-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 28px;
+
+.label {
+  color: #999;
+  font-weight: 400;
+  margin-right: 0.3rem;
 }
-.account-dropdown {
-  background: #353b48;
-  padding: 10px;
-  border-radius: 8px;
-  position: absolute;
-  right: 30px;
-  margin-top: 10px;
-  width: 220px;
-}
-.small-text {
-  font-size: 12px;
-  word-break: break-all;
-}
-.highlight-box {
-  background: #192a56;
-  padding: 10px;
+
+.value {
+  color: #0ff;
   font-family: monospace;
+}
+
+/* Card */
+.card {
+  background: #13132a;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 0 10px #00ffd5;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #00ffd5;
+}
+
+.bet-input input,
+.card input {
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Dice Result */
+.result {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: #0ff;
+  font-weight: bold;
+}
+
+/* Highlight Box */
+.highlight {
+  background: #0f0f0f;
+  padding: 0.7rem;
+  border-radius: 8px;
   word-break: break-all;
-  border-radius: 6px;
+  font-family: monospace;
+  border: 1px solid #444;
+  margin-top: 0.5rem;
+  color: #0ff;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  background: #111827;
+  border-top: 2px solid #00ffd5;
+  color: #888;
 }
