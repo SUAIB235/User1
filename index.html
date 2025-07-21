@@ -1,125 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BNB Dice Game - Premium Crypto Betting</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRX Dice Betting</title>
+  <!-- Font Awesome -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..."
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
   />
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Optional Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <div class="logo">
-      <i class="fas fa-dice-d20"></i> <span>BNB Dice Game</span>
-    </div>
-  </header>
+<body class="bg-white text-gray-800 min-h-screen flex flex-col items-center justify-center p-6">
 
-  <main class="container">
-    <!-- Connect Wallet Section -->
-    <section id="connectSection" class="connect-section">
-      <div class="connect-box">
-        <h1><i class="fas fa-wallet"></i> Connect Your Wallet</h1>
-        <p>To start playing the premium BNB Dice Game, please connect your BNB Chain wallet like MetaMask or Trust Wallet.</p>
-        <button id="connectButton" onclick="connectWallet()" class="btn primary">
-          <i class="fas fa-plug"></i> Connect Wallet
-        </button>
-        <div class="supported-wallets">
-          <p>Supported wallets:</p>
-          <div class="wallet-icons">
-            <i class="fab fa-ethereum" title="MetaMask"></i>
-            <i class="fab fa-wallet" title="Trust Wallet"></i>
-            <i class="fab fa-binance" title="Binance Chain Wallet"></i>
-          </div>
-        </div>
-        <p class="secure-note"><i class="fas fa-lock"></i> Secure connection using Web3</p>
-      </div>
-    </section>
+  <!-- Website Header -->
+  <h1 class="text-3xl font-bold mb-2">
+    <i class="fas fa-dice text-gray-600 mr-2"></i>TRX Dice
+  </h1>
 
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="hidden">
-      <div class="top-bar">
-        <div class="balance-display">
-          <i class="fas fa-coins"></i>
-          <span>Balance: <strong><span id="balance">0.00</span> USDT</strong></span>
-        </div>
+  <!-- Description -->
+  <p class="text-sm text-gray-500 mb-6 text-center max-w-md">
+    Welcome to TRX Dice – a fun and fast crypto dice betting website powered by TRON (TRX). Connect your wallet and roll the dice to win TRX instantly!
+  </p>
 
-        <div class="account-menu-wrapper">
-          <button id="accountBtn" class="account-btn" onclick="toggleAccountMenu()">
-            <i class="fas fa-user-circle"></i>
-          </button>
+  <!-- Connect Wallet Button -->
+  <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition mb-8">
+    <i class="fas fa-wallet mr-2"></i>Connect Wallet
+  </button>
 
-          <div id="accountMenu" class="account-menu hidden">
-            <p><strong>Wallet Address</strong></p>
-            <p class="wallet-address" id="walletAddress"></p>
-            <hr />
-            <button class="btn secondary" onclick="showDeposit()">Deposit</button>
-            <button class="btn secondary" onclick="showWithdraw()">Withdraw</button>
-            <hr />
-            <button class="btn logout" onclick="logout()">Logout</button>
-          </div>
-        </div>
-      </div>
+  <!-- Dice Icon & Gray Text -->
+  <div class="text-center text-gray-600">
+    <i class="fas fa-dice fa-3x mb-2"></i>
+    <p class="text-lg">Roll and win with TRX</p>
+  </div>
 
-      <!-- Dice Game Card -->
-      <div class="card game-card">
-        <h2><i class="fas fa-dice"></i> Even or Odd Dice Game</h2>
-        <div class="choices">
-          <button class="btn even" onclick="selectChoice('even')">Even</button>
-          <button class="btn odd" onclick="selectChoice('odd')">Odd</button>
-        </div>
-        <input
-          type="number"
-          id="betAmount"
-          placeholder="Bet amount ($0.1 - $0.5)"
-          min="0.1"
-          max="0.5"
-          step="0.1"
-        />
-        <button class="btn roll" onclick="rollDice()">
-          <i class="fas fa-play"></i> Roll Dice
-        </button>
-        <div id="diceResult" class="result"></div>
-      </div>
-
-      <!-- Deposit Section -->
-      <div id="depositSection" class="card hidden">
-        <h2><i class="fas fa-arrow-down"></i> Deposit USDT (BEP20)</h2>
-        <p>Send USDT tokens to this address:</p>
-        <div class="highlight" id="depositAddress">0xYourDepositAddressHere</div>
-        <p class="small-note">Balance updates after deposit is confirmed on BNB Chain.</p>
-      </div>
-
-      <!-- Withdraw Section -->
-      <div id="withdrawSection" class="card hidden">
-        <h2><i class="fas fa-arrow-up"></i> Withdraw Funds</h2>
-        <input
-          type="text"
-          id="withdrawAddress"
-          placeholder="Your Wallet Address"
-        />
-        <input
-          type="number"
-          id="withdrawAmount"
-          placeholder="Amount ($1 - $10)"
-          min="1"
-          max="10"
-        />
-        <button class="btn withdraw" onclick="submitWithdraw()">
-          <i class="fas fa-paper-plane"></i> Request Withdraw
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>⚡ Powered by BNB Smart Chain | Play Responsibly</p>
-  </footer>
-
-  <script src="app.js"></script>
 </body>
 </html>
