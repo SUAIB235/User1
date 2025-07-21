@@ -34,11 +34,7 @@
   <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto">
     <div class="mb-4">
       <label class="block text-sm font-medium mb-2">Select Bet Amount</label>
-      <div class="flex gap-2 flex-wrap">
-        [0.1, 0.2, 0.3, 0.4, 0.5].map(amount => `
-          <button class="bet-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded" data-value="${amount}">${amount} TRX</button>
-        `).join('')
-      </div>
+      <div id="betOptions" class="flex gap-2 flex-wrap"></div>
     </div>
 
     <div class="mb-4">
@@ -51,33 +47,55 @@
 
     <button id="rollBtn" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Roll Dice</button>
 
-    <div id="result" class="mt-4 text-center text-lg font-semibold"></div>
+    <!-- Dice Display -->
+    <div class="text-center mt-6">
+      <i id="diceIcon" class="fas fa-dice fa-4x text-gray-600 mb-2"></i>
+      <div id="result" class="text-lg font-semibold mt-2"></div>
+    </div>
   </div>
 
   <script>
-    // Check login
-    const connected = localStorage.getItem("trx_connected");
-    if (!connected) window.location.href = "index.html";
+    // Redirect if not connected
+    if (localStorage.getItem("trx_connected") !== "true") {
+      window.location.href = "index.html";
+    }
 
-    // Set address
     const address = localStorage.getItem("trx_address");
     document.getElementById("userAddress").textContent = address || "Not Connected";
 
-    // Get balance (mock for now)
-    document.getElementById("balance").textContent = "999.9 TRX"; // Replace with real call to tronWeb.trx.getBalance()
-
+    // Fake balance (replace later with tronWeb.trx.getBalance)
+    let balance = 100; // Simulated balance in TRX
     let selectedBet = 0.1;
     let selectedSide = "odd";
 
-    // Button logic
-    document.querySelectorAll(".bet-btn").forEach(btn => {
+    const balanceDisplay = document.getElementById("balance");
+    const resultDiv = document.getElementById("result");
+    const diceIcon = document.getElementById("diceIcon");
+
+    function updateBalanceDisplay() {
+      balanceDisplay.textContent = `${balance.toFixed(2)} TRX`;
+    }
+
+    // Render bet buttons
+    const betOptions = [0.1, 0.2, 0.3, 0.4, 0.5];
+    const betContainer = document.getElementById("betOptions");
+    betOptions.forEach(amount => {
+      const btn = document.createElement("button");
+      btn.className = "bet-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded";
+      btn.textContent = `${amount} TRX`;
+      btn.dataset.value = amount;
+      if (amount === 0.1) btn.classList.add("bg-yellow-200"); // Default selected
+
       btn.addEventListener("click", () => {
-        selectedBet = parseFloat(btn.getAttribute("data-value"));
+        selectedBet = parseFloat(btn.dataset.value);
         document.querySelectorAll(".bet-btn").forEach(b => b.classList.remove("bg-yellow-200"));
         btn.classList.add("bg-yellow-200");
       });
+
+      betContainer.appendChild(btn);
     });
 
+    // Side selection
     document.getElementById("oddBtn").addEventListener("click", () => {
       selectedSide = "odd";
       document.getElementById("oddBtn").classList.add("bg-yellow-200");
@@ -90,12 +108,42 @@
       document.getElementById("oddBtn").classList.remove("bg-yellow-200");
     });
 
-    // Roll logic
+    // Dice faces map
+    const diceFaces = {
+      1: "fa-dice-one",
+      2: "fa-dice-two",
+      3: "fa-dice-three",
+      4: "fa-dice-four",
+      5: "fa-dice-five",
+      6: "fa-dice-six",
+    };
+
+    // Roll Button
     document.getElementById("rollBtn").addEventListener("click", () => {
+      if (balance < selectedBet) {
+        resultDiv.textContent = "❌ Not enough balance!";
+        return;
+      }
+
+      balance -= selectedBet;
+      updateBalanceDisplay();
+
       const result = Math.floor(Math.random() * 6) + 1;
       const isWin = (result % 2 === 0 && selectedSide === "even") || (result % 2 !== 0 && selectedSide === "odd");
-      document.getElementById("result").textContent = `Dice rolled: ${result} — You ${isWin ? "Win 🎉" : "Lose ❌"}`;
+
+      // Show dice face
+      diceIcon.className = `fas ${diceFaces[result]} fa-4x text-gray-600`;
+
+      // Show result
+      resultDiv.textContent = `🎲 Rolled: ${result} — You ${isWin ? "Win 🎉" : "Lose ❌"}`;
+
+      if (isWin) {
+        balance += selectedBet * 2;
+        updateBalanceDisplay();
+      }
     });
+
+    updateBalanceDisplay();
   </script>
 </body>
 </html>
