@@ -6,6 +6,11 @@
   <title>TRX Dice Game</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .modal-bg {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen p-4">
 
@@ -13,13 +18,13 @@
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold"><i class="fas fa-dice mr-2"></i>Dice Game</h1>
     <div class="relative group">
-      <button class="text-gray-700 hover:text-black">
+      <button class="text-gray-700 hover:text-black" id="accountBtn">
         <i class="fas fa-user-circle fa-2x"></i>
       </button>
       <div class="absolute right-0 bg-white border mt-2 rounded-lg shadow-md p-4 hidden group-hover:block z-10 min-w-[220px]">
         <p class="text-xs text-gray-500 mb-1">Connected:</p>
         <p class="text-sm font-mono mb-2" id="userAddress"></p>
-        <button class="bg-green-500 text-white text-sm px-4 py-1 rounded mb-2 w-full">Deposit</button>
+        <button class="bg-green-500 text-white text-sm px-4 py-1 rounded mb-2 w-full" id="depositBtn">Deposit</button>
         <button class="bg-red-500 text-white text-sm px-4 py-1 rounded w-full">Withdraw</button>
       </div>
     </div>
@@ -30,8 +35,8 @@
     Balance: <span id="balance">-- TRX</span>
   </div>
 
-  <!-- Betting Controls -->
-  <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto">
+  <!-- Game Box -->
+  <div class="bg-white p-4 rounded-xl shadow-md max-w-sm mx-auto">
     <div class="mb-4">
       <label class="block text-sm font-medium mb-2">Select Bet Amount</label>
       <div id="betOptions" class="flex gap-2 flex-wrap"></div>
@@ -40,8 +45,8 @@
     <div class="mb-4">
       <label class="block text-sm font-medium mb-2">Choose Side</label>
       <div class="flex gap-4">
-        <button id="oddBtn" class="side-btn bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded">Odd</button>
-        <button id="evenBtn" class="side-btn bg-purple-100 hover:bg-purple-200 px-4 py-2 rounded">Even</button>
+        <button id="oddBtn" class="side-btn bg-red-100 hover:bg-red-200 px-4 py-2 rounded">Odd</button>
+        <button id="evenBtn" class="side-btn bg-green-100 hover:bg-green-200 px-4 py-2 rounded">Even</button>
       </div>
     </div>
 
@@ -54,8 +59,20 @@
     </div>
   </div>
 
+  <!-- Deposit Modal -->
+  <div id="depositModal" class="fixed inset-0 hidden items-center justify-center modal-bg z-20">
+    <div class="bg-white p-6 rounded-xl w-80 shadow-lg relative">
+      <button id="closeModal" class="absolute top-2 right-3 text-gray-500 hover:text-black text-lg">&times;</button>
+      <h2 class="text-xl font-bold mb-4">Deposit TRX</h2>
+      <div class="flex justify-center mb-4">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data=TRX_DEPOSIT_ADDRESS_HERE&size=150x150" alt="QR Code" />
+      </div>
+      <p class="text-sm text-center font-mono break-all">TRX_DEPOSIT_ADDRESS_HERE</p>
+      <p class="text-xs text-gray-500 text-center mt-2">Send only TRX. Funds appear after confirmation.</p>
+    </div>
+  </div>
+
   <script>
-    // Redirect if not connected
     if (localStorage.getItem("trx_connected") !== "true") {
       window.location.href = "index.html";
     }
@@ -63,10 +80,9 @@
     const address = localStorage.getItem("trx_address");
     document.getElementById("userAddress").textContent = address || "Not Connected";
 
-    // Fake balance (replace later with tronWeb.trx.getBalance)
-    let balance = 100; // Simulated balance in TRX
-    let selectedBet = 0.1;
-    let selectedSide = "odd";
+    let balance = parseFloat(localStorage.getItem("trx_balance") || "5"); // 5 TRX welcome bonus
+    let selectedBet = null;
+    let selectedSide = null;
 
     const balanceDisplay = document.getElementById("balance");
     const resultDiv = document.getElementById("result");
@@ -74,22 +90,23 @@
 
     function updateBalanceDisplay() {
       balanceDisplay.textContent = `${balance.toFixed(2)} TRX`;
+      localStorage.setItem("trx_balance", balance);
     }
 
     // Render bet buttons
     const betOptions = [0.1, 0.2, 0.3, 0.4, 0.5];
     const betContainer = document.getElementById("betOptions");
+
     betOptions.forEach(amount => {
       const btn = document.createElement("button");
       btn.className = "bet-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded";
       btn.textContent = `${amount} TRX`;
       btn.dataset.value = amount;
-      if (amount === 0.1) btn.classList.add("bg-yellow-200"); // Default selected
 
       btn.addEventListener("click", () => {
         selectedBet = parseFloat(btn.dataset.value);
-        document.querySelectorAll(".bet-btn").forEach(b => b.classList.remove("bg-yellow-200"));
-        btn.classList.add("bg-yellow-200");
+        document.querySelectorAll(".bet-btn").forEach(b => b.classList.remove("bg-yellow-300"));
+        btn.classList.add("bg-yellow-300");
       });
 
       betContainer.appendChild(btn);
@@ -98,17 +115,17 @@
     // Side selection
     document.getElementById("oddBtn").addEventListener("click", () => {
       selectedSide = "odd";
-      document.getElementById("oddBtn").classList.add("bg-yellow-200");
-      document.getElementById("evenBtn").classList.remove("bg-yellow-200");
+      document.getElementById("oddBtn").classList.add("bg-yellow-300");
+      document.getElementById("evenBtn").classList.remove("bg-yellow-300");
     });
 
     document.getElementById("evenBtn").addEventListener("click", () => {
       selectedSide = "even";
-      document.getElementById("evenBtn").classList.add("bg-yellow-200");
-      document.getElementById("oddBtn").classList.remove("bg-yellow-200");
+      document.getElementById("evenBtn").classList.add("bg-yellow-300");
+      document.getElementById("oddBtn").classList.remove("bg-yellow-300");
     });
 
-    // Dice faces map
+    // Dice face map
     const diceFaces = {
       1: "fa-dice-one",
       2: "fa-dice-two",
@@ -118,8 +135,15 @@
       6: "fa-dice-six",
     };
 
-    // Roll Button
+    // Roll dice
     document.getElementById("rollBtn").addEventListener("click", () => {
+      resultDiv.textContent = "";
+
+      if (!selectedBet || !selectedSide) {
+        resultDiv.textContent = "❗ Please select bet amount and side.";
+        return;
+      }
+
       if (balance < selectedBet) {
         resultDiv.textContent = "❌ Not enough balance!";
         return;
@@ -128,20 +152,39 @@
       balance -= selectedBet;
       updateBalanceDisplay();
 
-      const result = Math.floor(Math.random() * 6) + 1;
-      const isWin = (result % 2 === 0 && selectedSide === "even") || (result % 2 !== 0 && selectedSide === "odd");
+      const roll = Math.floor(Math.random() * 6) + 1;
+      const isWin = (roll % 2 === 0 && selectedSide === "even") || (roll % 2 !== 0 && selectedSide === "odd");
 
-      // Show dice face
-      diceIcon.className = `fas ${diceFaces[result]} fa-4x text-gray-600`;
-
-      // Show result
-      resultDiv.textContent = `🎲 Rolled: ${result} — You ${isWin ? "Win 🎉" : "Lose ❌"}`;
+      diceIcon.className = `fas ${diceFaces[roll]} fa-4x text-gray-600`;
+      resultDiv.textContent = `🎲 Rolled: ${roll} — You ${isWin ? "Win 🎉" : "Lose ❌"}`;
 
       if (isWin) {
         balance += selectedBet * 2;
         updateBalanceDisplay();
       }
     });
+
+    // Deposit modal logic
+    const depositModal = document.getElementById("depositModal");
+    document.getElementById("depositBtn").addEventListener("click", () => {
+      depositModal.classList.remove("hidden");
+    });
+
+    document.getElementById("closeModal").addEventListener("click", () => {
+      depositModal.classList.add("hidden");
+    });
+
+    // Simulate balance update every 10 seconds (for demo)
+    setInterval(() => {
+      // Replace with real check from wallet/contract
+      const randomChance = Math.random();
+      if (randomChance > 0.98) {
+        const depositAmount = 1 + Math.random(); // Simulated deposit
+        balance += depositAmount;
+        updateBalanceDisplay();
+        console.log(`💸 Simulated deposit: ${depositAmount.toFixed(2)} TRX`);
+      }
+    }, 10000);
 
     updateBalanceDisplay();
   </script>
