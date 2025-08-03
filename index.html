@@ -80,7 +80,7 @@
 <body>
   <h1>🎲 Game Analyzer (1-36)</h1>
   <div class="container">
-    <h3>Enter Last Draw (7 Numbers):</h3>
+    <h3>Enter Last Draw (5 Numbers):</h3>
     <div class="input-section" id="input-section"></div>
     <button onclick="submitDraw()">Submit</button>
     <button class="clear-btn" onclick="clearData()">Clear History</button>
@@ -97,12 +97,12 @@
     const numberGrid = document.getElementById('number-grid');
     const suggestion = document.getElementById('suggestion');
     const TOTAL_NUMBERS = 36;
-    const DRAW_SIZE = 7;
+    const DRAW_SIZE = 5;
 
-    let history = JSON.parse(localStorage.getItem('gameHistory')) || [];
+    let history = JSON.parse(localStorage.getItem('gameHistory36')) || [];
     let counts = Array(TOTAL_NUMBERS).fill(0);
 
-    // Create input boxes for 7 numbers
+    // Create input boxes for 5 numbers
     for (let i = 0; i < DRAW_SIZE; i++) {
       const input = document.createElement('input');
       input.type = 'number';
@@ -159,17 +159,17 @@
         input.value = '';
       });
       if (draw.length !== DRAW_SIZE) {
-        alert('Please enter exactly 7 valid numbers!');
+        alert('Please enter exactly 5 valid numbers!');
         return;
       }
       history.push(draw);
-      localStorage.setItem('gameHistory', JSON.stringify(history));
+      localStorage.setItem('gameHistory36', JSON.stringify(history));
       updatePercentages();
     }
 
     function clearData() {
       if (confirm('Clear all saved data?')) {
-        localStorage.removeItem('gameHistory');
+        localStorage.removeItem('gameHistory36');
         history = [];
         updatePercentages();
       }
@@ -179,4 +179,4 @@
   </script>
 </body>
 </html>
-    
+          
