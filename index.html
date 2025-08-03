@@ -1,42 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TRX Dice Connect</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keno Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin: 20px;
+      color: #ffcc00;
+    }
+    .container {
+      width: 95%;
+      max-width: 800px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
+    }
+    .input-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .input-section input {
+      width: 60px;
+      padding: 8px;
+      text-align: center;
+      border: 2px solid #555;
+      border-radius: 8px;
+      background: #222;
+      color: #fff;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #ffcc00;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #e6b800; }
+    .result {
+      margin-top: 20px;
+    }
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .number-box {
+      padding: 10px;
+      text-align: center;
+      border-radius: 6px;
+      background: #333;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .top-number { background: #28a745 !important; }
+    .clear-btn {
+      background: #e63946;
+      margin-left: 10px;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+<body>
+  <h1>🎲 Keno Analyzer</h1>
+  <div class="container">
+    <h3>Enter Last Draw (20 Numbers):</h3>
+    <div class="input-section" id="input-section"></div>
+    <button onclick="submitDraw()">Submit</button>
+    <button class="clear-btn" onclick="clearData()">Clear History</button>
 
-  <div class="text-center">
-    <i class="fas fa-dice fa-4x text-gray-600 mb-4 animate-bounce"></i>
-    <h1 class="text-3xl font-bold mb-2">TRX Dice</h1>
-    <p class="text-sm text-gray-600 mb-6">Crypto-powered dice game. Bet with TRX and win big!</p>
-    <button id="connectBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700 transition">
-      <i class="fas fa-wallet mr-2"></i>Connect Wallet
-    </button>
-    <p id="error" class="text-red-600 text-sm mt-4 hidden">Please use a TRON-compatible wallet like TronLink, Trust Wallet, or Bitget.</p>
+    <div class="result">
+      <h3>📊 Winning Percentage:</h3>
+      <div class="number-grid" id="number-grid"></div>
+    </div>
   </div>
 
   <script>
-    document.getElementById("connectBtn").addEventListener("click", async () => {
-      if (window.tronWeb && window.tronWeb.ready) {
-        const address = window.tronWeb.defaultAddress.base58;
-        if (address) {
-          localStorage.setItem("trx_address", address);
-          window.location.href = "home.html";
-        }
-      } else {
-        document.getElementById("error").classList.remove("hidden");
-      }
-    });
+    const inputSection = document.getElementById('input-section');
+    const numberGrid = document.getElementById('number-grid');
+    const TOTAL_NUMBERS = 80;
+    const DRAW_SIZE = 20;
 
-    // Auto redirect if already connected
-    window.addEventListener("load", () => {
-      const addr = localStorage.getItem("trx_address");
-      if (addr) window.location.href = "home.html";
-    });
+    let history = JSON.parse(localStorage.getItem('kenoHistory')) || [];
+    let counts = Array(TOTAL_NUMBERS).fill(0);
+
+    // Create input boxes for 20 numbers
+    for (let i = 0; i < DRAW_SIZE; i++) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = 1;
+      input.max = TOTAL_NUMBERS;
+      input.placeholder = `#${i+1}`;
+      inputSection.appendChild(input);
+    }
+
+    function updatePercentages() {
+      counts = Array(TOTAL_NUMBERS).fill(0);
+      history.forEach(draw => draw.forEach(num => counts[num - 1]++));
+
+      const totalDraws = history.length;
+      numberGrid.innerHTML = '';
+      const percentages = counts.map(c => totalDraws > 0 ? ((c / totalDraws) * 100).toFixed(1) : 0);
+
+      const maxPercent = Math.max(...percentages);
+      percentages.forEach((pct, i) => {
+        const box = document.createElement('div');
+        box.className = 'number-box';
+        if (pct == maxPercent && maxPercent > 0) box.classList.add('top-number');
+        box.textContent = `${i+1} (${pct}%)`;
+        numberGrid.appendChild(box);
+      });
+    }
+
+    function submitDraw() {
+      const inputs = document.querySelectorAll('.input-section input');
+      const draw = [];
+      inputs.forEach(input => {
+        const val = parseInt(input.value);
+        if (!isNaN(val) && val >= 1 && val <= TOTAL_NUMBERS) draw.push(val);
+        input.value = '';
+      });
+      if (draw.length !== DRAW_SIZE) {
+        alert('Please enter exactly 20 valid numbers!');
+        return;
+      }
+      history.push(draw);
+      localStorage.setItem('kenoHistory', JSON.stringify(history));
+      updatePercentages();
+    }
+
+    function clearData() {
+      if (confirm('Clear all saved data?')) {
+        localStorage.removeItem('kenoHistory');
+        history = [];
+        updatePercentages();
+      }
+    }
+
+    updatePercentages();
   </script>
 </body>
 </html>
