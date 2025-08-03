@@ -92,8 +92,100 @@
       <div class="number-grid" id="number-grid"></div>
     </div>
   </div>
+<div class="result">
+  <h3>📊 Winning Percentage:</h3>
+  <div class="number-grid" id="number-grid"></div>
+  <h3 id="suggestion" style="margin-top: 20px; color:#00ffcc;"></h3>
+</div>
 
   <script>
+
+  const inputSection = document.getElementById('input-section');
+  const numberGrid = document.getElementById('number-grid');
+  const suggestion = document.getElementById('suggestion');
+  const TOTAL_NUMBERS = 80;
+  const DRAW_SIZE = 20;
+
+  let history = JSON.parse(localStorage.getItem('kenoHistory')) || [];
+  let counts = Array(TOTAL_NUMBERS).fill(0);
+
+  // Create input boxes for 20 numbers
+  for (let i = 0; i < DRAW_SIZE; i++) {
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = 1;
+    input.max = TOTAL_NUMBERS;
+    input.placeholder = `#${i+1}`;
+    inputSection.appendChild(input);
+  }
+
+  function updatePercentages() {
+    counts = Array(TOTAL_NUMBERS).fill(0);
+    history.forEach(draw => draw.forEach(num => counts[num - 1]++));
+
+    const totalDraws = history.length;
+    numberGrid.innerHTML = '';
+    const percentages = counts.map(c => totalDraws > 0 ? ((c / totalDraws) * 100).toFixed(1) : 0);
+
+    const maxPercent = Math.max(...percentages);
+    percentages.forEach((pct, i) => {
+      const box = document.createElement('div');
+      box.className = 'number-box';
+      if (pct == maxPercent && maxPercent > 0) box.classList.add('top-number');
+      box.textContent = `${i+1} (${pct}%)`;
+      numberGrid.appendChild(box);
+    });
+
+    updateSuggestions(); // NEW: Update suggestions based on last 10 rounds
+  }
+
+  function updateSuggestions() {
+    if (history.length < 10) {
+      suggestion.textContent = "❌ Need at least 10 rounds for suggestions.";
+      return;
+    }
+
+    // Take last 10 rounds
+    const last10 = history.slice(-10);
+    let freq = Array(TOTAL_NUMBERS).fill(0);
+    last10.forEach(draw => draw.forEach(num => freq[num - 1]++));
+
+    // Get top 3 numbers
+    let top3 = freq
+      .map((count, index) => ({ number: index + 1, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+
+    suggestion.textContent = `🔥 Suggested Next Numbers: ${top3.map(n => n.number).join(", ")}`;
+  }
+
+  function submitDraw() {
+    const inputs = document.querySelectorAll('.input-section input');
+    const draw = [];
+    inputs.forEach(input => {
+      const val = parseInt(input.value);
+      if (!isNaN(val) && val >= 1 && val <= TOTAL_NUMBERS) draw.push(val);
+      input.value = '';
+    });
+    if (draw.length !== DRAW_SIZE) {
+      alert('Please enter exactly 20 valid numbers!');
+      return;
+    }
+    history.push(draw);
+    localStorage.setItem('kenoHistory', JSON.stringify(history));
+    updatePercentages();
+  }
+
+  function clearData() {
+    if (confirm('Clear all saved data?')) {
+      localStorage.removeItem('kenoHistory');
+      history = [];
+      updatePercentages();
+    }
+  }
+
+  updatePercentages();
+
     const inputSection = document.getElementById('input-section');
     const numberGrid = document.getElementById('number-grid');
     const TOTAL_NUMBERS = 80;
