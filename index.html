@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Advanced Keno Analyzer</title>
+  <title>Advanced Keno Analyzer with OCR</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,7 +22,7 @@
     }
     .container {
       width: 95%;
-      max-width: 700px; /* ✅ Reduced width for better fitting */
+      max-width: 700px;
       background: #1e1e1e;
       padding: 20px;
       border-radius: 12px;
@@ -30,7 +31,7 @@
     }
     .number-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* ✅ Responsive grid */
+      grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
       gap: 6px;
       margin-top: 15px;
     }
@@ -68,20 +69,16 @@
       transition: 0.2s;
     }
     button:hover { background: #e6b800; }
-    .clear-btn {
-      background: #e63946;
-      margin-left: 10px;
-    }
-    .result h3 {
-      margin-top: 20px;
-      color: #00ffcc;
-    }
+    .clear-btn { background: #e63946; margin-left: 10px; }
+    .result h3 { margin-top: 20px; color: #00ffcc; }
+    #screenshot { margin-top: 15px; }
   </style>
 </head>
 <body>
-  <h1>🎲 Advanced Keno Analyzer</h1>
+  <h1>🎲 Advanced Keno Analyzer (with OCR)</h1>
   <div class="container">
-    <h3>Select Last Draw (Click 20 Numbers):</h3>
+    <h3>Select Last Draw (Click or Upload Screenshot):</h3>
+    <input type="file" id="screenshot" accept="image/*">
     <div class="number-grid" id="select-grid"></div>
     <button onclick="submitDraw()">Submit Round</button>
     <button class="clear-btn" onclick="clearData()">Clear History</button>
@@ -100,6 +97,7 @@
     const selectGrid = document.getElementById("select-grid");
     const suggestion = document.getElementById("suggestion");
     const roundInfo = document.getElementById("round-info");
+    const screenshotInput = document.getElementById("screenshot");
 
     let history = JSON.parse(localStorage.getItem("kenoHistoryHybrid")) || [];
     let selectedNumbers = [];
@@ -112,7 +110,6 @@
       const serial = document.createElement("span");
       serial.className = "serial-label";
       box.appendChild(serial);
-
       box.addEventListener("click", () => toggleSelect(i, box, serial));
       selectGrid.appendChild(box);
     }
@@ -176,6 +173,34 @@
         suggestion.textContent = `❌ Need at least ${MIN_ROUNDS_FOR_SUGGESTION} rounds for suggestions.`;
       }
     }
+
+    // OCR: Extract numbers from screenshot
+    screenshotInput.addEventListener("change", async (e) => {
+      if (!e.target.files.length) return;
+      const file = e.target.files[0];
+      const { data } = await Tesseract.recognize(file, "eng", { logger: m => console.log(m) });
+      let detectedNumbers = data.text.match(/\b\d+\b/g).map(n => parseInt(n)).filter(n => n >= 1 && n <= TOTAL_NUMBERS);
+      detectedNumbers = detectedNumbers.slice(0, DRAW_SIZE); // Ensure max 20
+
+      if (detectedNumbers.length < DRAW_SIZE) {
+        alert("OCR detected fewer than 20 numbers. Please check the image.");
+        return;
+      }
+
+      // Auto-select detected numbers
+      selectedNumbers = [];
+      document.querySelectorAll(".number-box").forEach((box) => {
+        box.classList.remove("selected");
+        box.querySelector(".serial-label").textContent = "";
+      });
+
+      detectedNumbers.forEach(num => {
+        const box = document.querySelectorAll(".number-box")[num - 1];
+        selectedNumbers.push(num);
+        box.classList.add("selected");
+        box.querySelector(".serial-label").textContent = selectedNumbers.length;
+      });
+    });
 
     function suggestNextNumbers() {
       const lastRounds = history.slice(-30); 
