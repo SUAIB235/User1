@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Keno Analyzer with Next Number Prediction</title>
+  <title>Advanced Keno Analyzer</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,27 +21,31 @@
     }
     .container {
       width: 95%;
-      max-width: 800px;
+      max-width: 900px;
       background: #1e1e1e;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
     }
-    .input-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+    .number-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      margin-top: 15px;
     }
-    .input-section input {
-      width: 60px;
-      padding: 8px;
+    .number-box {
+      padding: 10px;
       text-align: center;
-      border: 2px solid #555;
-      border-radius: 8px;
-      background: #222;
+      border-radius: 6px;
+      background: #333;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+    .number-box.selected {
+      background: #28a745 !important;
       color: #fff;
-      font-size: 16px;
     }
     button {
       margin-top: 15px;
@@ -54,161 +58,163 @@
       cursor: pointer;
       transition: 0.2s;
     }
-    button:hover {
-      background: #e6b800;
-    }
-    .result {
-      margin-top: 20px;
-    }
-    .number-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 8px;
-      margin-top: 15px;
-    }
-    .number-box {
-      padding: 10px;
-      text-align: center;
-      border-radius: 6px;
-      background: #333;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .top-number {
-      background: #28a745 !important;
-    }
+    button:hover { background: #e6b800; }
     .clear-btn {
       background: #e63946;
       margin-left: 10px;
     }
+    .result h3 {
+      margin-top: 20px;
+      color: #00ffcc;
+    }
+    .serial-label {
+      font-size: 12px;
+      display: block;
+      margin-top: 2px;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
-  <h1>🎲 Keno Analyzer</h1>
+  <h1>🎲 Advanced Keno Analyzer</h1>
   <div class="container">
-    <h3>Enter Last Draw (20 Numbers):</h3>
-    <div class="input-section" id="input-section"></div>
-    <button onclick="submitDraw()">Submit</button>
+    <h3>Select Last Draw (Click 20 Numbers):</h3>
+    <div class="number-grid" id="select-grid"></div>
+    <button onclick="submitDraw()">Submit Round</button>
     <button class="clear-btn" onclick="clearData()">Clear History</button>
 
     <div class="result">
-      <h3>📊 Winning Percentage:</h3>
-      <div class="number-grid" id="number-grid"></div>
-      <h3 id="suggestion" style="margin-top: 20px; color:#00ffcc;"></h3>
+      <h3 id="round-info"></h3>
+      <h3 id="suggestion"></h3>
     </div>
   </div>
 
   <script>
-    const inputSection = document.getElementById('input-section');
-    const numberGrid = document.getElementById('number-grid');
-    const suggestion = document.getElementById('suggestion');
     const TOTAL_NUMBERS = 80;
     const DRAW_SIZE = 20;
+    const MIN_ROUNDS_FOR_SUGGESTION = 15;
 
-    let history = JSON.parse(localStorage.getItem('kenoHistory')) || [];
-    let counts = Array(TOTAL_NUMBERS).fill(0);
+    const selectGrid = document.getElementById("select-grid");
+    const suggestion = document.getElementById("suggestion");
+    const roundInfo = document.getElementById("round-info");
 
-    // Create input boxes for 20 numbers
-    for (let i = 0; i < DRAW_SIZE; i++) {
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = 1;
-      input.max = TOTAL_NUMBERS;
-      input.placeholder = `#${i+1}`;
-      inputSection.appendChild(input);
+    let history = JSON.parse(localStorage.getItem("kenoHistoryHybrid")) || [];
+    let selectedNumbers = [];
+
+    // Create clickable grid
+    for (let i = 1; i <= TOTAL_NUMBERS; i++) {
+      const box = document.createElement("div");
+      box.className = "number-box";
+      box.textContent = i;
+      const serial = document.createElement("span");
+      serial.className = "serial-label";
+      box.appendChild(serial);
+
+      box.addEventListener("click", () => toggleSelect(i, box, serial));
+      selectGrid.appendChild(box);
     }
 
-    function updatePercentages() {
-      counts = Array(TOTAL_NUMBERS).fill(0);
-      history.forEach(draw => draw.forEach(num => counts[num - 1]++));
-
-      const totalDraws = history.length;
-      numberGrid.innerHTML = '';
-      const percentages = counts.map(c => totalDraws > 0 ? ((c / totalDraws) * 100).toFixed(1) : 0);
-
-      const maxPercent = Math.max(...percentages);
-      percentages.forEach((pct, i) => {
-        const box = document.createElement('div');
-        box.className = 'number-box';
-        if (pct == maxPercent && maxPercent > 0) box.classList.add('top-number');
-        box.textContent = `${i+1} (${pct}%)`;
-        numberGrid.appendChild(box);
-      });
-
-      updateSuggestions();
-    }
-
-    // Analyze which number(s) most frequently follow each number in last 10 rounds
-    function analyzeNextNumberFrequencies(rounds) {
-      // Create an array of arrays for counts: nextNumCounts[number][nextNumber]
-      const nextNumCounts = Array(TOTAL_NUMBERS).fill(null).map(() => Array(TOTAL_NUMBERS).fill(0));
-
-      rounds.forEach(round => {
-        for (let i = 0; i < round.length - 1; i++) {
-          const currentNum = round[i] - 1;
-          const nextNum = round[i + 1] - 1;
-          nextNumCounts[currentNum][nextNum]++;
+    function toggleSelect(num, box, serial) {
+      const index = selectedNumbers.indexOf(num);
+      if (index >= 0) {
+        selectedNumbers.splice(index, 1);
+        box.classList.remove("selected");
+        serial.textContent = "";
+        updateSerialLabels();
+      } else {
+        if (selectedNumbers.length >= DRAW_SIZE) {
+          alert("You can select a maximum of 20 numbers per round.");
+          return;
         }
-      });
-
-      return nextNumCounts;
+        selectedNumbers.push(num);
+        box.classList.add("selected");
+        serial.textContent = selectedNumbers.length;
+      }
     }
 
-    function updateSuggestions() {
-      if (history.length < 10) {
-        suggestion.textContent = "❌ Need at least 10 rounds for suggestions.";
+    function updateSerialLabels() {
+      document.querySelectorAll(".number-box").forEach((box) => {
+        const num = parseInt(box.childNodes[0].nodeValue);
+        const serial = box.querySelector(".serial-label");
+        const idx = selectedNumbers.indexOf(num);
+        serial.textContent = idx >= 0 ? idx + 1 : "";
+      });
+    }
+
+    function submitDraw() {
+      if (selectedNumbers.length !== DRAW_SIZE) {
+        alert(`Please select exactly ${DRAW_SIZE} numbers.`);
         return;
       }
+      history.push([...selectedNumbers]);
+      localStorage.setItem("kenoHistoryHybrid", JSON.stringify(history));
+      selectedNumbers = [];
+      document.querySelectorAll(".number-box").forEach((box) => {
+        box.classList.remove("selected");
+        box.querySelector(".serial-label").textContent = "";
+      });
+      updateStats();
+    }
 
-      const last10 = history.slice(-10);
-      const nextNumCounts = analyzeNextNumberFrequencies(last10);
+    function clearData() {
+      if (confirm("Clear all saved data?")) {
+        localStorage.removeItem("kenoHistoryHybrid");
+        history = [];
+        suggestion.textContent = "";
+        roundInfo.textContent = "No rounds submitted yet.";
+      }
+    }
+
+    function updateStats() {
+      roundInfo.textContent = `Total Rounds Submitted: ${history.length}`;
+      if (history.length >= MIN_ROUNDS_FOR_SUGGESTION) {
+        suggestNextNumbers();
+      } else {
+        suggestion.textContent = `❌ Need at least ${MIN_ROUNDS_FOR_SUGGESTION} rounds for suggestions.`;
+      }
+    }
+
+    // Hybrid Prediction: Sequential + Hot/Cold + Co-occurrence
+    function suggestNextNumbers() {
+      const lastRounds = history.slice(-30); // Use last 30 rounds
+      const freq = Array(TOTAL_NUMBERS).fill(0);
+      const nextCount = Array.from({ length: TOTAL_NUMBERS }, () =>
+        Array(TOTAL_NUMBERS).fill(0)
+      );
+      const coOccur = Array.from({ length: TOTAL_NUMBERS }, () =>
+        Array(TOTAL_NUMBERS).fill(0)
+      );
+
+      // Frequency, sequential, and co-occurrence analysis
+      lastRounds.forEach((round) => {
+        round.forEach((num, idx) => {
+          freq[num - 1]++;
+          if (idx < round.length - 1) {
+            nextCount[num - 1][round[idx + 1] - 1]++;
+          }
+          round.forEach((other) => {
+            if (num !== other) coOccur[num - 1][other - 1]++;
+          });
+        });
+      });
 
       const lastRound = history[history.length - 1];
       const lastNum = lastRound[lastRound.length - 1] - 1;
 
-      const followers = nextNumCounts[lastNum];
-      const maxCount = Math.max(...followers);
-
-      if (maxCount === 0) {
-        suggestion.textContent = "⚠️ No next number data available for the last number.";
-        return;
-      }
-
-      // Collect all numbers with the highest following count
-      const candidates = [];
-      followers.forEach((count, idx) => {
-        if (count === maxCount) candidates.push(idx + 1);
+      // Score numbers: sequential follow + hot/cold + co-occurrence
+      const maxFreq = Math.max(...freq);
+      const scores = Array(TOTAL_NUMBERS).fill(0).map((_, i) => {
+        const seqScore = nextCount[lastNum][i] * 3;
+        const freqScore = (freq[i] / maxFreq) * 2;
+        const coScore = coOccur[lastNum][i] * 1.5;
+        return { num: i + 1, score: seqScore + freqScore + coScore };
       });
 
-      suggestion.textContent = `🔥 Suggested Next Number(s) after ${lastNum + 1}: ${candidates.join(', ')}`;
+      const top3 = scores.sort((a, b) => b.score - a.score).slice(0, 3);
+      suggestion.textContent = `🔥 Suggested Next 3 Numbers: ${top3.map((x) => x.num).join(", ")}`;
     }
 
-    function submitDraw() {
-      const inputs = document.querySelectorAll('.input-section input');
-      const draw = [];
-      inputs.forEach(input => {
-        const val = parseInt(input.value);
-        if (!isNaN(val) && val >= 1 && val <= TOTAL_NUMBERS) draw.push(val);
-        input.value = '';
-      });
-      if (draw.length !== DRAW_SIZE) {
-        alert('Please enter exactly 20 valid numbers!');
-        return;
-      }
-      history.push(draw);
-      localStorage.setItem('kenoHistory', JSON.stringify(history));
-      updatePercentages();
-    }
-
-    function clearData() {
-      if (confirm('Clear all saved data?')) {
-        localStorage.removeItem('kenoHistory');
-        history = [];
-        updatePercentages();
-      }
-    }
-
-    updatePercentages();
+    updateStats();
   </script>
 </body>
 </html>
