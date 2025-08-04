@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Analyzer (1-36)</title>
+  <title>Keno Analyzer</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -55,10 +55,12 @@
       transition: 0.2s;
     }
     button:hover { background: #e6b800; }
-    .result { margin-top: 20px; }
+    .result {
+      margin-top: 20px;
+    }
     .number-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(10, 1fr);
       gap: 8px;
       margin-top: 15px;
     }
@@ -78,9 +80,9 @@
   </style>
 </head>
 <body>
-  <h1>🎲 Game Analyzer (1-36)</h1>
+  <h1>🎲 Keno Analyzer</h1>
   <div class="container">
-    <h3>Enter Last Draw (5 Numbers):</h3>
+    <h3>Enter Last Draw (20 Numbers):</h3>
     <div class="input-section" id="input-section"></div>
     <button onclick="submitDraw()">Submit</button>
     <button class="clear-btn" onclick="clearData()">Clear History</button>
@@ -96,13 +98,13 @@
     const inputSection = document.getElementById('input-section');
     const numberGrid = document.getElementById('number-grid');
     const suggestion = document.getElementById('suggestion');
-    const TOTAL_NUMBERS = 36;
-    const DRAW_SIZE = 5;
+    const TOTAL_NUMBERS = 80;
+    const DRAW_SIZE = 20;
 
-    let history = JSON.parse(localStorage.getItem('gameHistory36')) || [];
+    let history = JSON.parse(localStorage.getItem('kenoHistory')) || [];
     let counts = Array(TOTAL_NUMBERS).fill(0);
 
-    // Create input boxes for 5 numbers
+    // Create input boxes for 20 numbers
     for (let i = 0; i < DRAW_SIZE; i++) {
       const input = document.createElement('input');
       input.type = 'number';
@@ -134,7 +136,7 @@
 
     function updateSuggestions() {
       if (history.length < 10) {
-        suggestion.textContent = "❌ Need at least 10 rounds for suggestion.";
+        suggestion.textContent = "❌ Need at least 10 rounds for suggestions.";
         return;
       }
 
@@ -142,12 +144,12 @@
       let freq = Array(TOTAL_NUMBERS).fill(0);
       last10.forEach(draw => draw.forEach(num => freq[num - 1]++));
 
-      // Get the single most frequent number
-      let top1 = freq
+      let top3 = freq
         .map((count, index) => ({ number: index + 1, count }))
-        .sort((a, b) => b.count - a.count)[0];
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3);
 
-      suggestion.textContent = `🔥 Suggested Next Number: ${top1.number}`;
+      suggestion.textContent = `🔥 Suggested Next Numbers: ${top3.map(n => n.number).join(", ")}`;
     }
 
     function submitDraw() {
@@ -159,17 +161,17 @@
         input.value = '';
       });
       if (draw.length !== DRAW_SIZE) {
-        alert('Please enter exactly 5 valid numbers!');
+        alert('Please enter exactly 20 valid numbers!');
         return;
       }
       history.push(draw);
-      localStorage.setItem('gameHistory36', JSON.stringify(history));
+      localStorage.setItem('kenoHistory', JSON.stringify(history));
       updatePercentages();
     }
 
     function clearData() {
       if (confirm('Clear all saved data?')) {
-        localStorage.removeItem('gameHistory36');
+        localStorage.removeItem('kenoHistory');
         history = [];
         updatePercentages();
       }
@@ -179,4 +181,3 @@
   </script>
 </body>
 </html>
-          
