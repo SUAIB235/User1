@@ -174,20 +174,28 @@
       }
     }
 
-    // OCR: Extract numbers from screenshot
+    // OCR: Extract numbers from screenshot (auto-filtering)
     screenshotInput.addEventListener("change", async (e) => {
       if (!e.target.files.length) return;
       const file = e.target.files[0];
-      const { data } = await Tesseract.recognize(file, "eng", { logger: m => console.log(m) });
-      let detectedNumbers = data.text.match(/\b\d+\b/g).map(n => parseInt(n)).filter(n => n >= 1 && n <= TOTAL_NUMBERS);
-      detectedNumbers = detectedNumbers.slice(0, DRAW_SIZE); // Ensure max 20
+      suggestion.textContent = "🔍 Detecting numbers from screenshot...";
+      
+      const { data } = await Tesseract.recognize(file, "eng");
+      let detectedNumbers = data.text.match(/\b\d+\b/g) || [];
 
-      if (detectedNumbers.length < DRAW_SIZE) {
-        alert("OCR detected fewer than 20 numbers. Please check the image.");
-        return;
+      // Convert to integers and filter only valid numbers 1–80
+      detectedNumbers = detectedNumbers
+        .map(n => parseInt(n))
+        .filter(n => n >= 1 && n <= TOTAL_NUMBERS)
+        .slice(0, DRAW_SIZE); // Limit to 20
+
+      if (detectedNumbers.length !== DRAW_SIZE) {
+        suggestion.textContent = "⚠️ OCR detected fewer than 20 valid numbers. Please verify.";
+      } else {
+        suggestion.textContent = "✅ Numbers detected and selected automatically.";
       }
 
-      // Auto-select detected numbers
+      // Auto-select detected numbers in grid
       selectedNumbers = [];
       document.querySelectorAll(".number-box").forEach((box) => {
         box.classList.remove("selected");
