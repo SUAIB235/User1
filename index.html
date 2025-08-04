@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keno Analyzer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keno Analyzer with Next Number Prediction</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -54,7 +54,9 @@
       cursor: pointer;
       transition: 0.2s;
     }
-    button:hover { background: #e6b800; }
+    button:hover {
+      background: #e6b800;
+    }
     .result {
       margin-top: 20px;
     }
@@ -72,7 +74,9 @@
       font-weight: bold;
       transition: 0.3s;
     }
-    .top-number { background: #28a745 !important; }
+    .top-number {
+      background: #28a745 !important;
+    }
     .clear-btn {
       background: #e63946;
       margin-left: 10px;
@@ -134,6 +138,22 @@
       updateSuggestions();
     }
 
+    // Analyze which number(s) most frequently follow each number in last 10 rounds
+    function analyzeNextNumberFrequencies(rounds) {
+      // Create an array of arrays for counts: nextNumCounts[number][nextNumber]
+      const nextNumCounts = Array(TOTAL_NUMBERS).fill(null).map(() => Array(TOTAL_NUMBERS).fill(0));
+
+      rounds.forEach(round => {
+        for (let i = 0; i < round.length - 1; i++) {
+          const currentNum = round[i] - 1;
+          const nextNum = round[i + 1] - 1;
+          nextNumCounts[currentNum][nextNum]++;
+        }
+      });
+
+      return nextNumCounts;
+    }
+
     function updateSuggestions() {
       if (history.length < 10) {
         suggestion.textContent = "❌ Need at least 10 rounds for suggestions.";
@@ -141,15 +161,26 @@
       }
 
       const last10 = history.slice(-10);
-      let freq = Array(TOTAL_NUMBERS).fill(0);
-      last10.forEach(draw => draw.forEach(num => freq[num - 1]++));
+      const nextNumCounts = analyzeNextNumberFrequencies(last10);
 
-      let top3 = freq
-        .map((count, index) => ({ number: index + 1, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 3);
+      const lastRound = history[history.length - 1];
+      const lastNum = lastRound[lastRound.length - 1] - 1;
 
-      suggestion.textContent = `🔥 Suggested Next Numbers: ${top3.map(n => n.number).join(", ")}`;
+      const followers = nextNumCounts[lastNum];
+      const maxCount = Math.max(...followers);
+
+      if (maxCount === 0) {
+        suggestion.textContent = "⚠️ No next number data available for the last number.";
+        return;
+      }
+
+      // Collect all numbers with the highest following count
+      const candidates = [];
+      followers.forEach((count, idx) => {
+        if (count === maxCount) candidates.push(idx + 1);
+      });
+
+      suggestion.textContent = `🔥 Suggested Next Number(s) after ${lastNum + 1}: ${candidates.join(', ')}`;
     }
 
     function submitDraw() {
