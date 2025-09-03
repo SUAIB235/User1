@@ -1,4 +1,0 @@
-window.env2 = {
-    BOT_TOKEN2: "8014553798:AAFcokHuyqVluJhN1xjWEoKn00_DGVorQ1U",
-    CHAT_ID2: 7788499741
-};
